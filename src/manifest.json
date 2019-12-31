@@ -1,6 +1,6 @@
 {
-    "name" : "",
-    "appid" : "",
+    "name" : "cds-app",
+    "appid" : "__UNI__0577B70",
     "description" : "",
     "versionName" : "1.0.0",
     "versionCode" : "100",
@@ -20,6 +20,10 @@
             /* 应用发布信息 */
             "android" : {
                 /* android打包配置 */
+				"packagename": "cn.vip56.cds",
+				"keystore": "E:/jdk1.8.0_144/test.keystore",
+				"password": "dxlani001",
+				"aliasname": "test.keystore",
                 "permissions" : [
                     "<uses-permission android:name=\"android.permission.CHANGE_NETWORK_STATE\"/>",
                     "<uses-permission android:name=\"android.permission.MOUNT_UNMOUNT_FILESYSTEMS\"/>",
@@ -48,7 +52,8 @@
             "ios" : {},
             /* ios打包配置 */
             "sdkConfigs" : {}
-        }
+        },
+        "nvueCompiler" : "weex"
     },
     /* SDK配置 */
     "quickapp" : {},
