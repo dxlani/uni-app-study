@@ -3,11 +3,26 @@ var fly = new Fly(); //创建fly实例
 import store from '../store'
 //设置超时
 fly.config.timeout = 10000;
+
 //配置请求基地址
 
-//fly.config.baseURL = "/"
- fly.config.baseURL = "https://cds.vip56.cn"
+// #ifdef H5
+if(process.env.NODE_ENV === 'development'){
+    console.log('开发环境');
+	fly.config.baseURL = "/" //代理
+	// fly.config.baseURL = "http://192.168.2.32:5000"  //姚正才
+}else{
+    console.log('生产环境')
+	fly.config.baseURL = "https://cds.vip56.cn"
+}
+// #endif
+
+// #ifndef H5
+fly.config.baseURL = "https://cds.vip56.cn"
 // fly.config.baseURL = "http://192.168.2.32:5000"  //姚正才
+// #endif
+ 
+
 
 fly.interceptors.request.use((request, promise) => {
     var that = this;

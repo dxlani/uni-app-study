@@ -30,16 +30,19 @@
             <view class="message">
               <button v-if="nullHouse" type="warn" class="login-btn" @click="getMessage">
 			   <text class="test">&#xe639;</text>
-			  {{btnMessage}}</button>
+			   <van-icon name="close" />
+				{{btnMessage}}</button>
               <button v-if="!nullHouse" type="warn" class="login-btn" disabled>{{second}}s后重新获取</button>
             </view>
         </view>
-        <view class="row-btn">
+        <view class="row-btn">  
             <button type="warn" class="login-btn" @click="login">登录</button>
         </view>
-		// #ifdef APP-PLUS || MP-WEIXIN || MP-QQ
+		// #ifndef H5
 		<van-button type="primary" >vant 按钮组件</van-button>
         // #endif
+		<van-toast id="van-toast" />
+		<van-dialog id="van-dialog" />
     </view>
 </template>
 
@@ -47,6 +50,8 @@
 import api from '../../http/api/api.js'
 import api_order from "../../http/api/api_order.js";
 import * as types  from '../../store/mutation-type'
+import Toast from "../../wxcomponents/vant/toast/toast";
+import Dialog from "../../wxcomponents/vant/dialog/dialog";
 export default {
     components: {
 
@@ -72,25 +77,23 @@ export default {
     onShow(){
         let cacheUserInfo = wx.getStorageSync("cacheUserInfo") ? wx.getStorageSync("cacheUserInfo") : null;
         let cacheToken = wx.getStorageSync("cacheToken") ?  wx.getStorageSync("cacheToken") : null;
-        if(cacheToken!=null && cacheUserInfo!=null){
-            console.log('cacheUserInfo',cacheUserInfo);
-            console.log('cacheToken',cacheToken);
-            this.$store.commit(types.getJwtToken,cacheToken);
-            this.$store.state.id = cacheUserInfo.id
-            this.$store.state.enterpriseId = cacheUserInfo.enterpriseId
-            this.$store.state.number =cacheUserInfo.number
-            this.$store.state.name = cacheUserInfo.name
-            this.$store.state.phone = cacheUserInfo.phone
-            this.$store.state.roleId = cacheUserInfo.roleId
-            this.$store.state.userSource = cacheUserInfo.userSource
-            this.$store.state.roleName = cacheUserInfo.roleName
-            this.$store.state.isDisable = cacheUserInfo.isDisable
-            
-                        
-             wx.reLaunch({
-                url: '/pages/scanCode/main'
-            })
-        }
+        // if(cacheToken!=null && cacheUserInfo!=null){
+        //     console.log('cacheUserInfo',cacheUserInfo);
+        //     console.log('cacheToken',cacheToken);
+        //     this.$store.commit(types.getJwtToken,cacheToken);
+        //     this.$store.state.id = cacheUserInfo.id
+        //     this.$store.state.enterpriseId = cacheUserInfo.enterpriseId
+        //     this.$store.state.number =cacheUserInfo.number
+        //     this.$store.state.name = cacheUserInfo.name
+        //     this.$store.state.phone = cacheUserInfo.phone
+        //     this.$store.state.roleId = cacheUserInfo.roleId
+        //     this.$store.state.userSource = cacheUserInfo.userSource
+        //     this.$store.state.roleName = cacheUserInfo.roleName
+        //     this.$store.state.isDisable = cacheUserInfo.isDisable
+        //      wx.reLaunch({
+        //         url: '/pages/scanCode/main'
+        //     })
+        // }
         
         // this.user.userCode = '190008'
         // this.user.phoneNumber = '18083781768'
@@ -129,7 +132,13 @@ export default {
                     this.timer();
                 })
             }else{
-                uni.showToast("请输入11位有效手机号");
+				Dialog.confirm({
+				  title: "提示",
+				  message: `有1个进行中的订单`,
+				  confirmButtonText: "前往查看",
+				  cancelButtonText: "结束并创建新订单"
+				})
+				Toast("请输入11位有效手机号");
             }
         },
         /**

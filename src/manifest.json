@@ -20,10 +20,10 @@
             /* 应用发布信息 */
             "android" : {
                 /* android打包配置 */
-				"packagename": "cn.vip56.cds",
-				"keystore": "E:/jdk1.8.0_144/test.keystore",
-				"password": "dxlani001",
-				"aliasname": "test.keystore",
+                "packagename" : "cn.vip56.cds",
+                "keystore" : "E:/jdk1.8.0_144/test.keystore",
+                "password" : "dxlani001",
+                "aliasname" : "test.keystore",
                 "permissions" : [
                     "<uses-permission android:name=\"android.permission.CHANGE_NETWORK_STATE\"/>",
                     "<uses-permission android:name=\"android.permission.MOUNT_UNMOUNT_FILESYSTEMS\"/>",
@@ -64,7 +64,12 @@
         "setting" : {
             "urlCheck" : false
         },
-        "usingComponents" : true
+        "usingComponents" : true,
+        "permission": {
+	    "scope.userLocation": {
+	      "desc": "你的位置信息将用于提供更精准的用户信息"
+	    }
+	}
     },
     "mp-alipay" : {
         "usingComponents" : true

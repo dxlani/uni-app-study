@@ -8,9 +8,11 @@
 					"titleNView":false
 				},
 				"usingComponents" : {  
-				   "van-button": "/wxcomponents/vant/button/index"  
+				   "van-button": "/wxcomponents/vant/button/index" ,
+				   "van-icon": "/wxcomponents/vant/icon/index",
+				   "van-toast": "/wxcomponents/vant/toast/index",
+				   "van-dialog": "/wxcomponents/vant/dialog/index"
 				}
-				
 			}
 		},
 		{
@@ -21,12 +23,91 @@
 					"titleNView":false
 				}
 			}
+		},
+		{
+			"path": "pages/order/main",
+			"style": {
+				"navigationBarTitleText": "订单",
+				"app-plus":{
+					"titleNView":false
+				},
+				"usingComponents": {
+				   "van-cell": "/wxcomponents/vant/cell/index",
+				   "van-cell-group": "/wxcomponents/vant/cell-group/index",
+				   "van-picker": "/wxcomponents/vant/picker/index",
+				   "van-popup": "/wxcomponents/vant/popup/index",
+				   "van-icon": "/wxcomponents/vant/icon/index",
+				   "van-dialog": "/wxcomponents/vant/dialog/index",
+				   "van-tag": "/wxcomponents/vant/tag/index"
+				},
+				"enablePullDownRefresh":true,
+				"onReachBottom":true
+			}
+		},
+		{
+			"path": "pages/mine/main",
+			"style": {
+				"navigationBarTitleText": "我",
+				"app-plus":{
+					"titleNView":false
+				},
+				"usingComponents": {
+				    "van-cell": "/wxcomponents/vant/cell/index",
+				    "van-cell-group": "/wxcomponents/vant/cell-group/index"
+				}
+			}
+		},
+		{
+			"path": "pages/createOrder/main",
+			"style": {
+				"navigationBarTitleText": "创建订单",
+				"app-plus":{
+					"titleNView":false
+				},
+				"usingComponents": {
+				    "van-cell": "/wxcomponents/vant/cell/index",
+				    "van-cell-group": "/wxcomponents/vant/cell-group/index",
+				    "van-picker": "/wxcomponents/vant/picker/index",
+				    "van-popup": "/wxcomponents/vant/popup/index",
+				    "van-toast": "/wxcomponents/vant/toast/index",
+				    "van-icon": "/wxcomponents/vant/icon/index",
+				    "van-dialog": "/wxcomponents/vant/dialog/index",
+				    "van-tag": "/wxcomponents/vant/tag/index"
+				}
+			}
 		}
 	],
 	"globalStyle": {
-		"navigationBarTextStyle": "black",
-		"navigationBarBackgroundColor": "#F8F8F8",
-		"backgroundColor": "#F8F8F8"
+		"navigationBarTextStyle": "white",
+		"navigationBarTitleText": "Hello uniapp",
+		"navigationBarBackgroundColor": "#007AFF",
+		"backgroundColor": "#F8F8F8",
+		"backgroundColorTop": "#F4F5F6",
+		"backgroundColorBottom": "#F4F5F6"
+	},
+	"tabBar": {
+		"color": "#999",
+		"backgroundColor": "#fafafa",
+		"selectedColor": "#333",
+		"borderStyle": "white",
+
+		"list": [{
+		  "text": "扫码",
+		  "pagePath": "pages/scanCode/main",
+		  "iconPath": "static/tabs/scanOn.png",
+		  "selectedIconPath": "static/tabs/scanOff.png"
+		},{
+		  "text": "订单",
+		  "pagePath": "pages/order/main",
+		  "iconPath": "static/tabs/orderOn.png",
+		  "selectedIconPath": "static/tabs/orderOff.png"
+		}, {
+		  "text": "我",
+		  "pagePath": "pages/mine/main",
+		  "iconPath": "static/tabs/mineOn.png",
+		  "selectedIconPath": "static/tabs/mineOff.png"
+		}],
+		"position": "bottom"
 	},
 	"condition" : { //模式配置，仅开发期间生效
 		"current": 0, //当前激活的模式(list 的索引项)
