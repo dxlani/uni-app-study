@@ -59,16 +59,24 @@
     "quickapp" : {},
     /* 快应用特有相关 */
     "mp-weixin" : {
-        /* 微信小程序特有相关 */
-        "appid" : "wx0f12a6d8945a08a4",
+        /* 微信小程序特有相关 wx498a9fd0a6fa234e*/
+        "appid" : "wx498a9fd0a6fa234e",
         "setting" : {
-            "urlCheck" : false
+            "urlCheck" : false,
+			"es6": true,
+			"postcss": true,
+			"minified": true,
+			"newFeature": true,
+			"nodeModules": false,
+			"autoAudits": false,
+			"uglifyFileName": true
         },
         "usingComponents" : true,
         "permission": {
-	    "scope.userLocation": {
-	      "desc": "你的位置信息将用于提供更精准的用户信息"
-	    }
+			"scope.userLocation": {
+	        "desc": "你的位置信息将用于提供更精准的用户信息"
+	    },
+		"cloudfunctionRoot": "static/functions/"
 	}
     },
     "mp-alipay" : {

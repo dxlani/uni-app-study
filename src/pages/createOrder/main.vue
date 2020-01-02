@@ -74,7 +74,7 @@
               <span style="color:red">*</span>
             </view>
             <picker mode="region" @change="RegionEndChange" class="picker">
-              <view>{{regionEnd[0]}}{{regionEnd[1]}}{{regionEnd[2]}}</view>
+              <view><text v-for="(item,index) in regionEnd" :key="index">{{item}}</text></view>
             </picker>
           </view>
           <view class="section section_gap">
@@ -317,7 +317,7 @@ export default {
           Toast(`起始地省市区不能为空`);
           return;
         }
-        if (this.regionEnd) {
+        if (this.regionEnd.length>0) {
           this.formData.destinationProvince = this.regionEnd[0];
           this.formData.destinationCity = this.regionEnd[1];
           this.formData.destinationCounty = this.regionEnd[2];

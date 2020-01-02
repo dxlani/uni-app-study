@@ -228,7 +228,7 @@ export default {
       changeCarcode:"",
       id:null,
       isFirst:null,
-      form:null,
+      form:{},
       cacheUserInfo:null,
       isOthers:false,
       nowLocation:{

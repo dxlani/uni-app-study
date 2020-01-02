@@ -897,7 +897,7 @@
 	height: 1em
 }
 
-.van-icon--image image {
+/* .van-icon--image image {
 	top: 0;
 	left: 0;
 	right: 0;
@@ -906,4 +906,4 @@
 	max-width: 100%;
 	max-height: 100%;
 	position: absolute
-}
+} */
