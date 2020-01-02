@@ -47,11 +47,11 @@
 </template>
 
 <script>
-import api from '../../http/api/api.js'
-import api_order from "../../http/api/api_order.js";
-import * as types  from '../../store/mutation-type'
-import Toast from "../../wxcomponents/vant/toast/toast";
-import Dialog from "../../wxcomponents/vant/dialog/dialog";
+import api from '@/http/api/api.js'
+import api_order from "@/http/api/api_order.js";
+import * as types  from '@/store/mutation-type'
+import Toast from "@/wxcomponents/vant/toast/toast";
+import Dialog from "@/wxcomponents/vant/dialog/dialog";
 export default {
     components: {
 
@@ -115,7 +115,7 @@ export default {
         },
         reset(){
             this.user.userCode = '190001'
-            this.user.phoneNumber = '18344717034'
+            this.user.phoneNumber = '183447170'
             this.user.captChasCode = '7136'
             this.btnMessage  = '获取验证码'
             this.second = 60
@@ -132,12 +132,24 @@ export default {
                     this.timer();
                 })
             }else{
-				Dialog.confirm({
-				  title: "提示",
-				  message: `有1个进行中的订单`,
-				  confirmButtonText: "前往查看",
-				  cancelButtonText: "结束并创建新订单"
-				})
+				// Dialog.confirm({
+				//   title: "提示",
+				//   message: `有1个进行中的订单`,
+				//   confirmButtonText: "前往查看",
+				//   cancelButtonText: "结束并创建新订单",
+				//   overlay:true
+				// })
+				
+				// uni.showModal({
+				// 	title: '提示',
+				// 	content: '有1个进行中的订单',
+				// 	cancelText: '结束',
+				// 	confirmText: '前往查看',
+				// 	success: res => {},
+				// 	fail: () => {},
+				// 	complete: () => {}
+				// });
+				
 				Toast("请输入11位有效手机号");
             }
         },

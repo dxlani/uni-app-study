@@ -1,10 +1,10 @@
 <template>
-  <div id="odMain">
-    <div class="oi-t"  >
-      <div class="order-info">
-        <div class="oiu">
-          <div class="oi-l">
-            <div class="oil-u">
+  <view id="odMain">
+    <view class="oi-t"  >
+      <view class="order-info">
+        <view class="oiu">
+          <view class="oi-l">
+            <view class="oil-u">
               <span class="ycard" v-if="form.carLicenseColor==2">黄牌</span>
               <span class="ycard bcard" v-if="form.carLicenseColor==1">蓝牌</span>
               <span class="ycard ocard" v-if="form.carLicenseColor==3">其他牌</span>
@@ -12,8 +12,8 @@
               <span class="oil-icon" @click="openChangeCarcode" v-if="form.status==1 && !isOthers">
                 <img src="/static/images/oedit.png" alt />
               </span>
-            </div>
-            <div class="oil-m">
+            </view>
+            <view class="oil-m">
               <span class="ol-label">定位状态</span>
               <span class="openStatus" v-if="form.beiDouEnable">
                 <van-icon name="success" color="#1493FF" />
@@ -30,36 +30,36 @@
                 <!-- <van-icon name="success" color="#1493FF" /> -->
                 开通LBS
               </span>
-            </div>
-            <div class="oil-d">
+            </view>
+            <view class="oil-d">
               <span class="ol-label" v-if="form.driverName">{{form.driverName}}</span>
               <span class="phone" @click="call(form.driverPhone)">{{form.driverPhone}}</span>
               <span class="oil-icon" @click="changePhoneFun" v-if="form.status==1 && !isOthers">
                 <img src="/static/images/oedit.png" alt />
               </span>
-            </div>
-          </div>
-          <div class="ol-r">
+            </view>
+          </view>
+          <view class="ol-r">
             <img :src="form.qrCodeUrl	" @click="listenerActionSheet" alt />
             <p>{{form.identificationCode}}</p>
-          </div>
-        </div>
-        <div class="oid">
-          <div class="oid-item">
+          </view>
+        </view>
+        <view class="oid">
+          <view class="oid-item">
             <span class="oid-icon">始</span>
             <p>{{form.originAddress}}</p>
-          </div>
-          <div class="oid-item">
+          </view>
+          <view class="oid-item">
             <span class="oid-icon oi-blue">终</span>
             <p>{{form.destinationAddress}}</p>
-          </div>
-        </div>
-      </div>
-    </div>
+          </view>
+        </view>
+      </view>
+    </view>
 
-    <div class="dinfo">
+    <view class="dinfo">
       <!-- 地图 -->
-      <div class="omap" v-if="form.status==1">
+      <view class="omap" v-if="form.status==1">
           <!-- :latitude="32.164418"
           :longitude="119.446448" -->
           <!-- show-location -->
@@ -79,20 +79,20 @@
         <view class="btn-area">
           <button @click="getLocation">定位</button>
         </view>
-      </div>
+      </view>
 
-      <!-- <div class="search-txt st" style="position:relative; z-index: 33;" v-if="isTop && form.status==1"> <span class="st-img">
+      <!-- <view class="search-txt st" style="position:relative; z-index: 33;" v-if="isTop && form.status==1"> <span class="st-img">
             <img src="/static/images/upscrow.png" alt />
-          </span>上滑收起定位</div>
-      <div class="search-txt st" style="position:relative; z-index: 33;" v-if="!isTop && form.status==1"> <span class="st-img">
+          </span>上滑收起定位</view>
+      <view class="search-txt st" style="position:relative; z-index: 33;" v-if="!isTop && form.status==1"> <span class="st-img">
             <img src="/static/images/downscrow.png" alt />
-          </span>下拉展开定位</div> -->
+          </span>下拉展开定位</view> -->
 
       <!-- 定位记录 -->
-      <div class="location-record">
-        <div class="lr-tit">定位记录</div>
+      <view class="location-record">
+        <view class="lr-tit">定位记录</view>
 
-        <div>
+        <view>
         
         <view v-if='listArray.length>0' class='order_process v'>
           <block  v-for="(item1,index) in listArray" :key="index">
@@ -125,8 +125,8 @@
 
           </block>
         </view>
-      </div>
-      </div>
+      </view>
+      </view>
 
       <view class="btn-end" v-if="form.status==1 && !isOthers">
           <button @click="endFun" >结束</button>
@@ -135,9 +135,9 @@
       <view class="btn-end" style="opacity:0.5" v-if="form.status==2 && !isOthers">
           <button disabled>已结束</button>
         </view>
-  <div style="width:100%;height:200px;visibility: hidden;" v-if="listArray.length==0"></div>
+  <view style="width:100%;height:200px;visibility: hidden;" v-if="listArray.length==0"></view>
 
-    </div>
+    </view>
 
     <!-- 修改手机号 -->
     <van-dialog
@@ -169,9 +169,9 @@
       @confirm="confirmChangeCarcode"
     >
       <van-field v-model="changeCarcode" @change="watchCarcode" input-align="left" placeholder="请输入新车牌号" label="新车牌号"  required />
-      <div style="position:relative;">
+      <view style="position:relative;">
         <van-field input-align="left" label="车牌颜色" disabled required />
-        <div
+        <view
           style="position:absolute;top:10px;right:20px;z-index:3;border: 1px solid #DCDFE6;width:400rpx;"
         >
           <picker
@@ -187,19 +187,19 @@
           >
             <van-icon name="arrow-down" />
           </span>
-        </div>
-      </div>
+        </view>
+      </view>
     </van-dialog>
     <van-dialog id="van-dialog" />
     <van-toast id="van-toast" />
-  </div>
+  </view>
 </template>
 
 <script>
 import api from "@/http/api/api.js";
-import store from "../../store";
-import Dialog from "~/vant/dialog/dialog";
-import Toast from "~/vant/toast/toast";
+import store from "@/store";
+import Dialog from "@/wxcomponents/vant/dialog/dialog";
+import Toast from "@/wxcomponents/vant/toast/toast";
 import api_order from "@/http/api/api_order.js";
 export default {
   data() {
@@ -213,8 +213,6 @@ export default {
       filterArray: ["蓝牌", "黄牌", "其他"],
       filter: "",
       changeColor:1,
-      latitude: "",
-      longitude: "",
       markers: [],
       listArray:[],
       isTop:true,
@@ -284,11 +282,11 @@ export default {
    
     
   },
-   onUnload(){
-    wx.switchTab({
-      url: '/pages/order/main'
-    })
-  },
+  //  onUnload(){
+  //   wx.switchTab({
+  //     url: '/pages/order/main'
+  //   })
+  // },
    onPageScroll: function(e) {
     
     console.log(e.scrollTop);
@@ -848,6 +846,7 @@ export default {
     bottom: 0px;
     left: 0px;
     width: 100%;
+	z-index:-1;
 }
 #odMain{
   height: 100%;

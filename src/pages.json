@@ -45,6 +45,26 @@
 			}
 		},
 		{
+			"path": "pages/orderDetail/main",
+			"style": {
+				"navigationBarTitleText": "订单详情",
+				"app-plus":{
+					"titleNView":false
+				},
+				"usingComponents": {
+					"van-dialog": "/wxcomponents/vant/dialog/index",
+					"van-cell-group": "/wxcomponents/vant/cell-group/index",
+					"van-cell": "/wxcomponents/vant/cell/index",
+					"van-field": "/wxcomponents/vant/field/index",
+					"van-button": "/wxcomponents/vant/button/index",
+					"van-icon": "/wxcomponents/vant/icon/index",
+					"van-action-sheet": "/wxcomponents/vant/action-sheet/index",
+					"van-picker": "/wxcomponents/vant/picker/index",
+					"van-toast": "/wxcomponents/vant/toast/index"
+				}
+			}
+		},
+		{
 			"path": "pages/mine/main",
 			"style": {
 				"navigationBarTitleText": "我",

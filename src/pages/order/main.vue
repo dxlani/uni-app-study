@@ -969,7 +969,6 @@ export default {
     },
     naviagte(item) {
       console.log("item", item);
-
       wx.navigateTo({
         url:
           "/pages/orderDetail/main?id=" +
