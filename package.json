@@ -1,5 +1,5 @@
 {
-  "name": "uni-app-study",
+  "name": "uni-app-shop",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -34,9 +34,8 @@
     "@dcloudio/uni-mp-weixin": "^2.0.0-alpha-25120200103006",
     "@dcloudio/uni-stat": "^2.0.0-24220191115011",
     "flyio": "^0.6.2",
-    "node-sass": "^4.13.0",
+   
     "regenerator-runtime": "^0.12.1",
-    "sass-loader": "^8.0.0",
     "vue": "^2.6.10",
     "vuex": "^3.0.1"
   },
@@ -58,7 +57,9 @@
     "miniprogram-api-typings": "^2.8.0-2",
     "postcss-comment": "^2.0.0",
     "vue-template-compiler": "^2.6.10",
-    "vuex-persistedstate": "^2.7.0"
+    "vuex-persistedstate": "^2.7.0",
+	"node-sass": "^4.13.0",
+	"sass-loader": "^8.0.0"
   },
   "browserslist": [
     "Android >= 4",
