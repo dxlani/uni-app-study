@@ -38,6 +38,7 @@
 				   "van-popup": "/wxcomponents/vant/popup/index",
 				   "van-icon": "/wxcomponents/vant/icon/index",
 				   "van-dialog": "/wxcomponents/vant/dialog/index",
+				   "van-toast": "/wxcomponents/vant/toast/index",
 				   "van-tag": "/wxcomponents/vant/tag/index"
 				},
 				"enablePullDownRefresh":true,

@@ -38,9 +38,7 @@
         <view class="row-btn">  
             <button type="warn" class="login-btn" @click="login">登录</button>
         </view>
-		// #ifndef H5
-		<van-button type="primary" >vant 按钮组件</van-button>
-        // #endif
+		<van-button type="primary" >vant按钮组件</van-button>
 		<van-toast id="van-toast" />
 		<van-dialog id="van-dialog" />
     </view>

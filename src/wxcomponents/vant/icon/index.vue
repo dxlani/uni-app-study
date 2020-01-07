@@ -1,4 +1,38 @@
-@import '../common/index.wxss';
+<template>
+<uni-shadow-root class="vant-icon-index"><view :class="'custom-class '+(classPrefix)+' '+(utils.isSrc(name) ? 'van-icon--image' : classPrefix + '-' + name)" :style="(color ? 'color: ' + color + ';' : '')+(size ? 'font-size: ' + size + ';' : '')+(customStyle)" @click="onClick">
+  <van-info v-if="info !== null" :info="info"></van-info>
+  <image v-if="utils.isSrc(name)" :src="name"></image>
+</view></uni-shadow-root>
+</template>
+<wxs src="../wxs/utils.wxs" module="utils"></wxs>
+<script>
+import VanInfo from '../info/index.vue'
+global['__wxVueOptions'] = {components:{'van-info': VanInfo}}
+
+global['__wxRoute'] = 'vant/icon/index'
+import { VantComponent } from '../common/component';
+VantComponent({
+  props: {
+    info: null,
+    name: String,
+    size: String,
+    color: String,
+    customStyle: String,
+    classPrefix: {
+      type: String,
+      value: 'van-icon'
+    }
+  },
+  methods: {
+    onClick: function onClick() {
+      this.$emit('click');
+    }
+  }
+});
+export default global['__wxComponents']['vant/icon/index']
+</script>
+<style platform="mp-weixin">
+@import '../common/index.css';
 
 @font-face {
 	font-style: normal;
@@ -897,7 +931,7 @@
 	height: 1em
 }
 
-/* .van-icon--image image {
+.van-icon--image image {
 	top: 0;
 	left: 0;
 	right: 0;
@@ -906,4 +940,5 @@
 	max-width: 100%;
 	max-height: 100%;
 	position: absolute
-} */
+}
+</style>
