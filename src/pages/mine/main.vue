@@ -12,14 +12,6 @@
       <label>{{user.code}}</label>
     </view>
     <view class="mine-profession">
-      <!-- <van-cell
-          title="工种"
-          custom-class="profession-row"
-          title-class="profession-title"
-          value-class="profession-value"
-          :value="user.profession"
-          is-link arrow-direction="down"
-          url="/pages/profession/main"/> -->
       <van-cell
         title="角色"
         custom-class="profession-row"
@@ -42,10 +34,13 @@
 	  <view slot="right">
 		  <van-button type="primary" @click="switchlang">{{otherlang}}</van-button>
 	  </view>
-	  <!-- <view slot="right">删除
-	   </view>-->
 	</van-swipe-cell>
-
+	<van-cell-group >
+    <van-cell title="指纹识别">
+			<van-switch :checked="openStatus" @change="onChange" size="24px"/>
+    </van-cell>
+	</van-cell-group>
+	
     <view class="row-btn">
       <button type="primary" class="logout-btn" @click="logout">{{$t('mine.logOut')}}</button>
     </view>
@@ -60,6 +55,7 @@
       return {
 		  usinglang:'',
 		  otherlang:'',
+		  openStatus:false,
         user:{
           id:'',
           imgSrc:'',
@@ -72,7 +68,7 @@
       }
     },
     created () {
-
+		this.openStatus=wx.getStorageSync('openStatus')
     },
     onLoad(){
 		if(this._i18n.locale=="zh"){
@@ -170,7 +166,7 @@
        * 退出登录
        */
       logout(){
-        this.$store.commit(types.getJwtToken,'');
+        // this.$store.commit(types.getJwtToken,'');
         this.$store.state.id = ''
         this.$store.state.enterpriseId = ''
         this.$store.state.number = ''
@@ -180,9 +176,7 @@
         this.$store.state.userSource = ''
         this.$store.state.roleName = ''
         this.$store.state.isDisable = false
-        wx.clearStorage("cacheUserInfo")
-        wx.clearStorage("cacheToken")
-        // console.log(store.state)
+        // wx.clearStorage("cacheToken")
         wx.reLaunch({
           url: '/pages/login/main'
         })
@@ -215,6 +209,14 @@
 	  				title: this.$i18n.messages[lang].tabBar.me
 	  	});
 	  },
+	  fingerPrint(){
+		  
+	  },
+	  onChange(e){
+		  this.openStatus=e.mp.detail;
+		  this.$store.state.openStatus=this.openStatus
+		  uni.setStorageSync('openStatus',this.openStatus)
+	  }
     },
 	
   }

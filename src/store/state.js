@@ -3,7 +3,7 @@ const state = {
   jwtToken:'',
   enterpriseId:'',
   number:'',
-  // id:'',
+  openStatus:false,
   id:'',
   name:'',
   phone:'',

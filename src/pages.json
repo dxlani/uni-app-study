@@ -36,6 +36,7 @@
 				    "van-cell": "/wxcomponents/vant/cell/index",
 				    "van-cell-group": "/wxcomponents/vant/cell-group/index",
 					"van-button": "/wxcomponents/vant/button/index",
+					"van-switch": "/wxcomponents/vant/switch/index",
 					"van-swipe-cell": "/wxcomponents/vant/swipe-cell/index"
 				}
 			}

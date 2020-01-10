@@ -38,7 +38,7 @@
         <view class="row-btn">  
             <button type="warn" class="login-btn" @click="login">{{$t('mine.login')}}</button>
         </view>
-		<van-button type="primary" @click="switchlang">切换语言</van-button>
+		<van-button type="primary" @click="fingerPrint">指纹识别</van-button>
 		<van-toast id="van-toast" />
 		<van-dialog id="van-dialog" />
     </view>
@@ -71,7 +71,7 @@ export default {
 
     created () {
         this.reset();
-		
+       
     },
     onShow(){
         let cacheUserInfo = wx.getStorageSync("cacheUserInfo") ? wx.getStorageSync("cacheUserInfo") : null;
@@ -132,13 +132,7 @@ export default {
                     this.timer();
                 })
             }else{
-				// Dialog.confirm({
-				//   title: "提示",
-				//   message: `有1个进行中的订单`,
-				//   confirmButtonText: "前往查看",
-				//   cancelButtonText: "结束并创建新订单",
-				//   overlay:true
-				// })
+				
 				
 				// uni.showModal({
 				// 	title: '提示',
@@ -172,50 +166,57 @@ export default {
          * 登录
          */
         login(){
-            if(this.user.userCode === ""){
-                uni.showToast({
-					    title: "请输入工号",
-					    icon: "none"
-				});
-                return;
-            }else
-            if(!(/^1[345678]\d{9}$/.test(this.user.phoneNumber))){
-                uni.showToast({
-					    title: "请输入11位有效手机号",
-					    icon: "none"
-				});
-                return;
-            }else if(this.user.captChasCode === ""){
-                uni.showToast({
-					    title: "请输入有效验证码",
-					    icon: "none"
-				});
-                return;
-            }else{
-                api.login(this.user.userCode,this.user.phoneNumber,this.user.captChasCode).then(res=>{
-                 console.log("test",res,this.$store)
-                        this.$store.commit(types.getJwtToken,res.token);
-                        this.$store.state.id = res.userInfo.id
-                        // this.$store.state.id = 'a99585ab-6c3c-4583-9055-dab6371c513e'
-                        this.$store.state.enterpriseId = res.userInfo.enterpriseId
-                        this.$store.state.number = res.userInfo.number
-                        this.$store.state.name = res.userInfo.name
-                        this.$store.state.phone = res.userInfo.phone
-                        this.$store.state.roleId = res.userInfo.roleId
-                        this.$store.state.userSource = res.userInfo.userSource
-                        this.$store.state.roleName = res.userInfo.roleName
-                        this.$store.state.isDisable = res.userInfo.isDisable
-                        wx.setStorageSync("cacheUserInfo", res.userInfo);
-                        wx.setStorageSync("cacheToken", res.token);
-
-                        wx.reLaunch({
-                            url: '/pages/scanCode/main'
-                        })
-                }).catch(function (error) {
-
-                 });
-            }
+		if(wx.getStorageSync('openStatus')){
+		    this.fingerPrint();
+		}else{
+				this.loginfun()
+			}	
         },
+		loginfun(){
+			if(this.user.userCode === ""){
+				uni.showToast({
+						title: "请输入工号",
+						icon: "none"
+				});
+				return;
+			}else
+			if(!(/^1[345678]\d{9}$/.test(this.user.phoneNumber))){
+				uni.showToast({
+						title: "请输入11位有效手机号",
+						icon: "none"
+				});
+				return;
+			}else if(this.user.captChasCode === ""){
+				uni.showToast({
+						title: "请输入有效验证码",
+						icon: "none"
+				});
+				return;
+			}else{
+				api.login(this.user.userCode,this.user.phoneNumber,this.user.captChasCode).then(res=>{
+				 console.log("test",res,this.$store)
+						this.$store.commit(types.getJwtToken,res.token);
+						this.$store.state.id = res.userInfo.id
+						// this.$store.state.id = 'a99585ab-6c3c-4583-9055-dab6371c513e'
+						this.$store.state.enterpriseId = res.userInfo.enterpriseId
+						this.$store.state.number = res.userInfo.number
+						this.$store.state.name = res.userInfo.name
+						this.$store.state.phone = res.userInfo.phone
+						this.$store.state.roleId = res.userInfo.roleId
+						this.$store.state.userSource = res.userInfo.userSource
+						this.$store.state.roleName = res.userInfo.roleName
+						this.$store.state.isDisable = res.userInfo.isDisable
+						wx.setStorageSync("cacheUserInfo", res.userInfo);
+						wx.setStorageSync("cacheToken", res.token);
+			
+						wx.reLaunch({
+							url: '/pages/scanCode/main'
+						})
+				}).catch(function (error) {
+			
+				 });
+			}
+		},
         /**
          * 拨打电话
          */
@@ -224,14 +225,74 @@ export default {
                 phoneNumber: this.telNumber,
             })
         },
-		switchlang(){
-			if(this._i18n.locale=="zh"){
-				this._i18n.locale='en'
-			}else {
-				this._i18n.locale="zh"
-			}
+		fingerPrint(){
+			//值	         说明
+			//fingerPrint	指纹识别
+			//facial	    人脸识别
+			var that=this;
+			wx.checkIsSupportSoterAuthentication({
+				success:res=>{
+					if(res.supportMode.indexOf('fingerPrint')>-1){
+						 wx.checkIsSoterEnrolledInDevice({
+							checkAuthMode: 'fingerPrint',
+							success(res) {
+								 if(res.isEnrolled){
+									wx.startSoterAuthentication({
+										"requestAuthModes":['fingerPrint'],
+										"challenge":'123456',
+										"authContent":"",
+										success:res=>{
+											that.user.userCode = '190001';
+											that.user.phoneNumber = '18344717034';
+											that.user.captChasCode = '9307';
+											// #ifdef APP-PLUS
+												that.getDeviceInfo();
+											// #endif
+											that.loginfun();
+										},
+										fail:res=>{
+											console.log('failfail',res)
+											Dialog.confirm({
+											  title: "提示",
+											  message: `指纹识别失败次数超出限制，请使用其它方式进行认证`
+											}).then(()=>{
+												wx.clearStorage()
+											})
+										}
+									})
+								 }else{
+									 Dialog.confirm({
+									   title: "提示",
+									   message: `此设备未录入指纹，请到设置中开启`
+									 })
+								 }
+							},
+							fail(err) {
+								console.log(err);
+							}
+						                   
+						 })
+						
+					}else{
+						Dialog.confirm({
+						  title: "提示",
+						  message: `'此设备不支持指纹识别`
+						})
+					}
+				}
+			})
 			
 		},
+		getDeviceInfo(){
+			plus.device.getInfo({
+				success:function(e){
+					console.log('getDeviceInfo success: '+JSON.stringify(e));
+				},
+				fail:function(e){
+					console.log('getDeviceInfo failed: '+JSON.stringify(e));
+				}
+			});
+		}
     }
 }
 </script>
