@@ -36,9 +36,9 @@
             </view>
         </view>
         <view class="row-btn">  
-            <button type="warn" class="login-btn" @click="login">登录</button>
+            <button type="warn" class="login-btn" @click="login">{{$t('mine.login')}}</button>
         </view>
-		<van-button type="primary" >vant按钮组件</van-button>
+		<van-button type="primary" @click="switchlang">切换语言</van-button>
 		<van-toast id="van-toast" />
 		<van-dialog id="van-dialog" />
     </view>
@@ -70,7 +70,8 @@ export default {
     },
 
     created () {
-        this.reset()
+        this.reset();
+		
     },
     onShow(){
         let cacheUserInfo = wx.getStorageSync("cacheUserInfo") ? wx.getStorageSync("cacheUserInfo") : null;
@@ -97,6 +98,7 @@ export default {
         // this.user.phoneNumber = '18083781768'
 
     },
+	
     onUnload(){
         this.reset();
     },
@@ -221,7 +223,15 @@ export default {
             wx.makePhoneCall({
                 phoneNumber: this.telNumber,
             })
-        }
+        },
+		switchlang(){
+			if(this._i18n.locale=="zh"){
+				this._i18n.locale='en'
+			}else {
+				this._i18n.locale="zh"
+			}
+			
+		},
     }
 }
 </script>

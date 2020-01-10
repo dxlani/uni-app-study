@@ -35,18 +35,19 @@
         is-link
         url="/pages/scanCodeRecord/main"/>
     </view>
-    <!-- <view class="mine-phone">
-        <van-cell
-            title="更换手机号"
-            custom-class="phone-row"
-            title-class="phone-title"
-            value-class="phone-value"
-            :value="user.phone"
-            is-link arrow-direction="down"
-            url="/pages/changePhone/main"/>
-    </view> -->
+	<van-swipe-cell :right-width="60" >
+	  <van-cell-group>
+	    <van-cell title="切换语言" :value="usinglang" />
+	  </van-cell-group>
+	  <view slot="right">
+		  <van-button type="primary" @click="switchlang">{{otherlang}}</van-button>
+	  </view>
+	  <!-- <view slot="right">删除
+	   </view>-->
+	</van-swipe-cell>
+
     <view class="row-btn">
-      <button type="primary" class="logout-btn" @click="logout">退出登录</button>
+      <button type="primary" class="logout-btn" @click="logout">{{$t('mine.logOut')}}</button>
     </view>
   </view>
 </template>
@@ -57,6 +58,8 @@
   export default {
     data () {
       return {
+		  usinglang:'',
+		  otherlang:'',
         user:{
           id:'',
           imgSrc:'',
@@ -64,6 +67,7 @@
           code:'',
           profession:'',
           phone:'',
+		  
         }
       }
     },
@@ -71,7 +75,16 @@
 
     },
     onLoad(){
-
+		if(this._i18n.locale=="zh"){
+			this.usinglang="中文";
+			this.otherlang="英文";
+		}else {
+			this.usinglang="英文";
+			this.otherlang="中文";
+		}
+	   uni.setNavigationBarTitle({
+	   			title: this.$i18n.messages[this.$i18n.locale].tabBar.me
+	   });
     },
     onShow(){
       this.getInfo()
@@ -173,8 +186,37 @@
         wx.reLaunch({
           url: '/pages/login/main'
         })
-      }
+      },
+	  switchlang(){
+		  console.log('test',this._i18n.locale)
+	  	if(this._i18n.locale=="zh"){
+	  		this._i18n.locale='en';
+			this.usinglang="英文";
+			this.otherlang="中文";
+	  	}else {
+	  		this._i18n.locale="zh";
+			this.usinglang="中文";
+			this.otherlang="英文";
+	  	}
+	  	const lang = this.$i18n.locale;
+	  	uni.setTabBarItem({
+	  				index: 0,
+	  				text: this.$i18n.messages[lang].tabBar.scanCode
+	  	});
+	  	uni.setTabBarItem({
+	  				index: 1,
+	  				text: this.$i18n.messages[lang].tabBar.order
+	  	});
+	  	uni.setTabBarItem({
+	  				index: 2,
+	  				text: this.$i18n.messages[lang].tabBar.me
+	  	});
+	  	uni.setNavigationBarTitle({
+	  				title: this.$i18n.messages[lang].tabBar.me
+	  	});
+	  },
     },
+	
   }
 </script>
 <style>

@@ -1,5 +1,5 @@
 {
-    "name" : "cds-app",
+    "name" : "uni-app-study",
     "appid" : "__UNI__0577B70",
     "description" : "",
     "versionName" : "1.0.0",
@@ -55,6 +55,31 @@
         },
         "nvueCompiler" : "weex"
     },
+    // "locales":{
+    // 	"en": {   // 英文  
+    // 			"name": "HBuilder",  // 应用名称  
+    // 			"android": {  
+    // 				"strings": {  //Android平台自定义字符串  
+    // 					"CustomKey": "CustomValue"  
+    // 					//...  
+    // 				}  
+    // 			},  
+    // 			"ios": {  
+    // 				"privacyDescription": { //iOS平台隐私访问描述信息  
+    // 					"NSPhotoLibraryUsageDescription": "access to the user’s photo library(read)"  
+    // 					//...  
+    // 				},  
+    // 				"infoPlist": {  //iOS平台自定义InfoPlist.strings  
+    // 					"CustomKey": "CustomValue"  
+    // 					//...  
+    // 				}  
+    // 			}  
+    // 		},
+    // 	"zh": {   // 中文（简体）  
+    // 	},  
+    // 	"zh-HK": {  // 繁体中文（香港）  
+    // 	}  
+    // }
     /* SDK配置 */
     "quickapp" : {},
     /* 快应用特有相关 */

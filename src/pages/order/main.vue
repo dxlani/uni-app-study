@@ -169,6 +169,9 @@ export default {
   },
   created() {},
   onLoad() {
+	  uni.setNavigationBarTitle({
+	  			title: this.$i18n.messages[this.$i18n.locale].tabBar.order
+	  });
     this.formData = {
       //车牌号
       carLicenseNumber: "",

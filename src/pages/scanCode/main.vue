@@ -24,8 +24,23 @@ export default {
     }
   },
   onLoad () {
-    // var that = this
-    // that.scan();
+	   const lang = this.$i18n.locale;
+	   uni.setTabBarItem({
+	   			index: 0,
+	   			text: this.$i18n.messages[lang].tabBar.scanCode
+	   });
+	   uni.setTabBarItem({
+	   			index: 1,
+	   			text: this.$i18n.messages[lang].tabBar.order
+	   });
+	   uni.setTabBarItem({
+	   			index: 2,
+	   			text: this.$i18n.messages[lang].tabBar.me
+	   });
+	   uni.setNavigationBarTitle({
+	   			title: this.$i18n.messages[lang].tabBar.scanCode
+	   });
+	   
   },
   onHide () {
 
