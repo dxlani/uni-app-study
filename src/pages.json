@@ -1,20 +1,6 @@
 {
 	"pages": [ //pages数组中第一项表示应用启动页，参考：https://uniapp.dcloud.io/collocation/pages
-		{
-			"path": "pages/mine/main",
-			"style": {
-				"navigationBarTitleText": "我",
-				"app-plus":{
-					"titleNView":false
-				},
-				"usingComponents": {
-				    "van-cell": "/wxcomponents/vant/cell/index",
-				    "van-cell-group": "/wxcomponents/vant/cell-group/index",
-					"van-button": "/wxcomponents/vant/button/index",
-					"van-swipe-cell": "/wxcomponents/vant/swipe-cell/index"
-				}
-			}
-		},
+		
 		{
 			"path": "pages/login/main",
 			"style": {
@@ -36,6 +22,21 @@
 				"navigationBarTitleText": "扫码",
 				"app-plus":{
 					"titleNView":false
+				}
+			}
+		},
+		{
+			"path": "pages/mine/main",
+			"style": {
+				"navigationBarTitleText": "我",
+				"app-plus":{
+					"titleNView":false
+				},
+				"usingComponents": {
+				    "van-cell": "/wxcomponents/vant/cell/index",
+				    "van-cell-group": "/wxcomponents/vant/cell-group/index",
+					"van-button": "/wxcomponents/vant/button/index",
+					"van-swipe-cell": "/wxcomponents/vant/swipe-cell/index"
 				}
 			}
 		},
