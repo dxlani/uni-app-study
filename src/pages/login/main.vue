@@ -38,7 +38,7 @@
         <view class="row-btn">  
             <button type="warn" class="login-btn" @click="login">{{$t('mine.login')}}</button>
         </view>
-		<van-button type="primary" @click="fingerPrint">指纹识别</van-button>
+		<!-- <van-button type="primary" @click="fingerPrint">指纹识别</van-button> -->
 		<van-toast id="van-toast" />
 		<van-dialog id="van-dialog" />
     </view>

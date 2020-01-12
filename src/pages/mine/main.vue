@@ -47,6 +47,7 @@
   </view>
 </template>
 <script>
+  import { upLoad } from '@/utils/upload'
   import store from '../../store'
   import * as types  from '@/store/mutation-type'
   import api from '@/http/api/api.js'
@@ -234,14 +235,12 @@
     font-size: 28rpx;
     color: #333333;
     letter-spacing: 0.42rpx;
-    padding-left: 34rpx;
   }
   .profession-value,
   .phone-value{
     font-size: 28rpx;
     color: #999;
     letter-spacing: 0.42rpx;
-    padding-right: 40rpx;
   }
 </style>
 
