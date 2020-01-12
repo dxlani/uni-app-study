@@ -29,7 +29,7 @@
           </view>
             <view class="message">
               <button v-if="nullHouse" type="warn" class="login-btn" @click="getMessage">
-			   <text class="test">&#xe639;</text>
+			   <text class="test">&#xe72e;</text>
 			   <van-icon name="close" />
 				{{btnMessage}}</button>
               <button v-if="!nullHouse" type="warn" class="login-btn" disabled>{{second}}s后重新获取</button>
@@ -76,7 +76,7 @@ export default {
     onShow(){
         let cacheUserInfo = wx.getStorageSync("cacheUserInfo") ? wx.getStorageSync("cacheUserInfo") : null;
         let cacheToken = wx.getStorageSync("cacheToken") ?  wx.getStorageSync("cacheToken") : null;
-        // if(cacheToken!=null && cacheUserInfo!=null){
+        if(cacheToken!=null && cacheUserInfo!=null){
         //     console.log('cacheUserInfo',cacheUserInfo);
         //     console.log('cacheToken',cacheToken);
         //     this.$store.commit(types.getJwtToken,cacheToken);
@@ -89,13 +89,12 @@ export default {
         //     this.$store.state.userSource = cacheUserInfo.userSource
         //     this.$store.state.roleName = cacheUserInfo.roleName
         //     this.$store.state.isDisable = cacheUserInfo.isDisable
-        //      wx.reLaunch({
-        //         url: '/pages/scanCode/main'
-        //     })
-        // }
+             wx.reLaunch({
+                url: '/pages/scanCode/main'
+            })
+        }
         
-        // this.user.userCode = '190008'
-        // this.user.phoneNumber = '18083781768'
+     
 
     },
 	

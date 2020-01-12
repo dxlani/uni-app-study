@@ -101,6 +101,18 @@
 				    "van-tag": "/wxcomponents/vant/tag/index"
 				}
 			}
+		},
+		{
+			"path": "pages/uniDemo/main",
+			"style": {
+				"navigationBarTitleText": "uniDemo",
+				"app-plus":{
+					"titleNView":true
+				},
+				"usingComponents": {
+				    "van-icon": "/wxcomponents/vant/icon/index"
+				}
+			}
 		}
 	],
 	"globalStyle": {
@@ -127,6 +139,11 @@
 		  "pagePath": "pages/order/main",
 		  "iconPath": "static/tabs/orderOn.png",
 		  "selectedIconPath": "static/tabs/orderOff.png"
+		},{
+		  "text": "uniDemo",
+		  "pagePath": "pages/uniDemo/main",
+		  "iconPath": "static/tabs/icondemo2.png",
+		  "selectedIconPath": "static/tabs/icondemo.png"
 		}, {
 		  "text": "我",
 		  "pagePath": "pages/mine/main",
