@@ -18,7 +18,7 @@ if(process.env.NODE_ENV === 'development'){
 // #endif
 
 // #ifndef H5
-fly.config.baseURL = "https://cds.vip56.cn"
+fly.config.baseURL = "https://test-newcdsenterprise.vip56.cn"
 // fly.config.baseURL = "http://192.168.2.32:5000"  //姚正才
 // #endif
  
