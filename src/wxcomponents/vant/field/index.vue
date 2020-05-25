@@ -1,25 +1,30 @@
 <template>
-<uni-shadow-root class="vant-field-index"><van-cell :icon="leftIcon" :title="label" :center="center" :border="border" :is-link="isLink" :required="required" :custom-style="customStyle" :title-width="titleWidth" custom-class="van-field">
+<uni-shadow-root class="vant-field-index"><van-cell :size="size" :icon="leftIcon" :title="label" :center="center" :border="border" :is-link="isLink" :required="required" :clickable="clickable" :title-width="titleWidth" :custom-style="customStyle" :arrow-direction="arrowDirection" custom-class="van-field">
   <slot name="left-icon" slot="icon"></slot>
   <slot name="label" slot="title"></slot>
-  <view :class="'van-field__body '+(type === 'textarea' ? 'van-field__body--textarea' : '')">
-    <textarea v-if="type === 'textarea'" :class="'input-class '+(utils.bem('field__input', [inputAlign, { disabled, error }]))" :fixed="fixed" :focus="focus" :value="value" :disabled="disabled || readonly" :maxlength="maxlength" :auto-height="autosize" :placeholder="placeholder" :placeholder-style="placeholderStyle" :placeholder-class="error ? 'van-field__input--error' : 'van-field__placeholder'" :cursor-spacing="cursorSpacing" :adjust-position="adjustPosition" :show-confirm-bar="showConfirmBar" @input="onInput" @blur="onBlur" @focus="onFocus" @confirm="onConfirm"></textarea>
-    <input v-else :class="'input-class '+(utils.bem('field__input', [inputAlign, { disabled, error }]))" :type="type" :focus="focus" :value="value" :disabled="disabled || readonly" :maxlength="maxlength" :placeholder="placeholder" :placeholder-style="placeholderStyle" :placeholder-class="error ? 'van-field__input--error' : 'van-field__placeholder'" :confirm-type="confirmType" :confirm-hold="confirmHold" :cursor-spacing="cursorSpacing" :adjust-position="adjustPosition" @input="onInput" @blur="onBlur" @focus="onFocus" @confirm="onConfirm"></input>
-    <van-icon v-if="showClear" size="16px" name="clear" class="van-field__clear-root" custom-class="van-field__clear" @touchstart.native="onClear"></van-icon>
-    <view class="van-field__icon-container" v-if="icon || useIconSlot" @click="onClickIcon">
-      <van-icon v-if="icon" size="16px" :name="icon" :custom-class="'van-field__icon '+(iconClass)"></van-icon>
-      <slot v-else name="icon"></slot>
+  <view :class="utils.bem('field__body', [type])">
+    <textarea v-if="type === 'textarea'" :class="'input-class '+(utils.bem('field__input', [inputAlign, type, { disabled, error }]))" :fixed="fixed" :focus="focus" :cursor="cursor" :value="innerValue" :auto-focus="autoFocus" :disabled="disabled || readonly" :maxlength="maxlength" :placeholder="placeholder" :placeholder-style="placeholderStyle" :placeholder-class="utils.bem('field__placeholder', { error })" :auto-height="(!!autosize)" :style="computed.inputStyle(autosize)" :cursor-spacing="cursorSpacing" :adjust-position="adjustPosition" :show-confirm-bar="showConfirmBar" :hold-keyboard="holdKeyboard" :selection-end="selectionEnd" :selection-start="selectionStart" :disable-default-padding="disableDefaultPadding" @input="onInput" @blur="onBlur" @focus="onFocus" @confirm="onConfirm" @linechange="onLineChange" @keyboardheightchange="onKeyboardHeightChange">
+    </textarea>
+    <input v-else :class="'input-class '+(utils.bem('field__input', [inputAlign, { disabled, error }]))" :type="type" :focus="focus" :cursor="cursor" :value="innerValue" :auto-focus="autoFocus" :disabled="disabled || readonly" :maxlength="maxlength" :placeholder="placeholder" :placeholder-style="placeholderStyle" :placeholder-class="utils.bem('field__placeholder', { error })" :confirm-type="confirmType" :confirm-hold="confirmHold" :hold-keyboard="holdKeyboard" :cursor-spacing="cursorSpacing" :adjust-position="adjustPosition" :selection-end="selectionEnd" :selection-start="selectionStart" :password="password || type === 'password'" @input="onInput" @blur="onBlur" @focus="onFocus" @confirm="onConfirm" @keyboardheightchange="onKeyboardHeightChange"></input>
+    <van-icon v-if="showClear" name="clear" class="van-field__clear-root van-field__icon-root" @touchstart.native.stop.prevent="onClear"></van-icon>
+    <view class="van-field__icon-container" @click="onClickIcon">
+      <van-icon v-if="rightIcon || icon" :name="rightIcon || icon" :class="'van-field__icon-root '+(iconClass)" custom-class="right-icon-class"></van-icon>
+      <slot name="right-icon"></slot>
+      <slot name="icon"></slot>
     </view>
-    <view v-if="useButtonSlot" class="van-field__button">
+    <view class="van-field__button">
       <slot name="button"></slot>
     </view>
   </view>
-  <view v-if="errorMessage" class="van-field__error-message">
+  <view v-if="showWordLimit && maxlength" class="van-field__word-limit">
+    <view :class="utils.bem('field__word-num', { full: value.length >= maxlength })">{{ value.length }}</view>/{{ maxlength }}
+  </view>
+  <view v-if="errorMessage" :class="utils.bem('field__error-message', [errorMessageAlign, { disabled, error }])">
     {{ errorMessage }}
   </view>
 </van-cell></uni-shadow-root>
 </template>
-<wxs src="../wxs/utils.wxs" module="utils"></wxs>
+<wxs src="../wxs/utils.wxs" module="utils"></wxs><wxs src="./index.wxs" module="computed"></wxs>
 <script>
 import VanCell from '../cell/index.vue'
 import VanIcon from '../icon/index.vue'
@@ -27,162 +32,132 @@ global['__wxVueOptions'] = {components:{'van-cell': VanCell,'van-icon': VanIcon}
 
 global['__wxRoute'] = 'vant/field/index'
 import { VantComponent } from '../common/component';
+import { commonProps, inputProps, textareaProps } from './props';
+import { canIUseModel } from '../common/version';
 VantComponent({
   field: true,
-  classes: ['input-class'],
-  props: {
-    icon: String,
-    label: String,
-    error: Boolean,
-    fixed: Boolean,
-    focus: Boolean,
-    center: Boolean,
-    isLink: Boolean,
-    leftIcon: String,
-    disabled: Boolean,
-    autosize: Boolean,
-    readonly: Boolean,
-    required: Boolean,
-    iconClass: String,
-    clearable: Boolean,
-    inputAlign: String,
-    customClass: String,
-    confirmType: String,
-    confirmHold: Boolean,
-    errorMessage: String,
-    placeholder: String,
-    customStyle: String,
-    useIconSlot: Boolean,
-    useButtonSlot: Boolean,
-    showConfirmBar: {
-      type: Boolean,
-      value: true
-    },
-    placeholderStyle: String,
-    adjustPosition: {
-      type: Boolean,
-      value: true
-    },
-    cursorSpacing: {
-      type: Number,
-      value: 50
-    },
-    maxlength: {
-      type: Number,
-      value: -1
-    },
-    type: {
-      type: String,
-      value: 'text'
-    },
-    border: {
-      type: Boolean,
-      value: true
-    },
-    titleWidth: {
-      type: String,
-      value: '90px'
+  classes: ['input-class', 'right-icon-class'],
+  props: Object.assign(
+    Object.assign(
+      Object.assign(Object.assign({}, commonProps), inputProps),
+      textareaProps
+    ),
+    {
+      size: String,
+      icon: String,
+      label: String,
+      error: Boolean,
+      center: Boolean,
+      isLink: Boolean,
+      leftIcon: String,
+      rightIcon: String,
+      autosize: [Boolean, Object],
+      readonly: {
+        type: Boolean,
+        observer: 'setShowClear',
+      },
+      required: Boolean,
+      iconClass: String,
+      clearable: {
+        type: Boolean,
+        observer: 'setShowClear',
+      },
+      clickable: Boolean,
+      inputAlign: String,
+      customStyle: String,
+      errorMessage: String,
+      arrowDirection: String,
+      showWordLimit: Boolean,
+      errorMessageAlign: String,
+      border: {
+        type: Boolean,
+        value: true,
+      },
+      titleWidth: {
+        type: String,
+        value: '90px',
+      },
     }
-  },
+  ),
   data: {
-    showClear: false
+    focused: false,
+    innerValue: '',
+    showClear: false,
   },
-  beforeCreate: function beforeCreate() {
-    this.focused = false;
+  created() {
+    this.value = this.data.value;
+    this.setData({ innerValue: this.value });
   },
   methods: {
-    onInput: function onInput(event) {
-      var _this = this;
-
-      var _ref = event.detail || {},
-          _ref$value = _ref.value,
-          value = _ref$value === void 0 ? '' : _ref$value;
-
-      this.set({
-        value: value,
-        showClear: this.getShowClear(value)
-      }, function () {
-        _this.emitChange(value);
-      });
+    onInput(event) {
+      const { value = '' } = event.detail || {};
+      this.value = value;
+      this.setShowClear();
+      this.emitChange();
     },
-    onFocus: function onFocus(event) {
-      var _ref2 = event.detail || {},
-          _ref2$value = _ref2.value,
-          value = _ref2$value === void 0 ? '' : _ref2$value,
-          _ref2$height = _ref2.height,
-          height = _ref2$height === void 0 ? 0 : _ref2$height;
-
-      this.$emit('focus', {
-        value: value,
-        height: height
-      });
+    onFocus(event) {
       this.focused = true;
-      this.blurFromClear = false;
-      this.set({
-        showClear: this.getShowClear()
-      });
+      this.setShowClear();
+      this.$emit('focus', event.detail);
     },
-    onBlur: function onBlur(event) {
-      var _this2 = this;
-
-      var _ref3 = event.detail || {},
-          _ref3$value = _ref3.value,
-          value = _ref3$value === void 0 ? '' : _ref3$value,
-          _ref3$cursor = _ref3.cursor,
-          cursor = _ref3$cursor === void 0 ? 0 : _ref3$cursor;
-
-      this.$emit('blur', {
-        value: value,
-        cursor: cursor
-      });
+    onBlur(event) {
       this.focused = false;
-      var showClear = this.getShowClear();
-
-      if (this.data.value === value) {
-        this.set({
-          showClear: showClear
-        });
-      } else if (!this.blurFromClear) {
-        // fix: the handwritten keyboard does not trigger input change
-        this.set({
-          value: value,
-          showClear: showClear
-        }, function () {
-          _this2.emitChange(value);
-        });
-      }
+      this.setShowClear();
+      this.$emit('blur', event.detail);
     },
-    onClickIcon: function onClickIcon() {
+    onClickIcon() {
       this.$emit('click-icon');
     },
-    getShowClear: function getShowClear(value) {
-      value = value === undefined ? this.data.value : value;
-      return this.data.clearable && this.focused && value && !this.data.readonly;
-    },
-    onClear: function onClear() {
-      var _this3 = this;
-
-      this.blurFromClear = true;
-      this.set({
-        value: '',
-        showClear: this.getShowClear('')
-      }, function () {
-        _this3.emitChange('');
-
-        _this3.$emit('clear', '');
+    onClear() {
+      this.setData({ innerValue: '' });
+      this.value = '';
+      this.setShowClear();
+      wx.nextTick(() => {
+        this.emitChange();
+        this.$emit('clear', '');
       });
     },
-    onConfirm: function onConfirm() {
-      this.$emit('confirm', this.data.value);
+    onConfirm(event) {
+      const { value = '' } = event.detail || {};
+      this.value = value;
+      this.setShowClear();
+      this.$emit('confirm', value);
     },
-    emitChange: function emitChange(value) {
-      this.$emit('input', value);
-      this.$emit('change', value);
-    }
-  }
+    setValue(value) {
+      this.value = value;
+      this.setShowClear();
+      if (value === '') {
+        this.setData({ innerValue: '' });
+      }
+      this.emitChange();
+    },
+    onLineChange(event) {
+      this.$emit('linechange', event.detail);
+    },
+    onKeyboardHeightChange(event) {
+      this.$emit('keyboardheightchange', event.detail);
+    },
+    emitChange() {
+      if (canIUseModel()) {
+        this.setData({ value: this.value });
+      }
+      wx.nextTick(() => {
+        this.$emit('input', this.value);
+        this.$emit('change', this.value);
+      });
+    },
+    setShowClear() {
+      const { clearable, readonly } = this.data;
+      const { focused, value } = this;
+      this.setData({
+        showClear: !!clearable && !!focused && !!value && !readonly,
+      });
+    },
+    noop() {},
+  },
 });
 export default global['__wxComponents']['vant/field/index']
 </script>
 <style platform="mp-weixin">
-@import '../common/index.css';.van-field__body{display:-webkit-flex;display:flex;-webkit-align-items:center;align-items:center}.van-field__body--textarea{min-height:24px}.van-field__input{display:block;width:100%;height:24px;min-height:24px;padding:0;margin:0;line-height:inherit;color:#333;text-align:left;background-color:transparent;border:0;box-sizing:border-box;resize:none}.van-field__input--disabled{color:#999;background-color:transparent;opacity:1}.van-field__input--center{text-align:center}.van-field__input--right{text-align:right}.van-field__input--error{color:#f44}.van-field__placeholder{color:#999}.van-field__clear-root{display:-webkit-flex;display:flex;height:24px;-webkit-align-items:center;align-items:center}.van-field__button,.van-field__clear,.van-field__icon-container{-webkit-flex-shrink:0;flex-shrink:0}.van-field__clear,.van-field__icon-container{padding:0 10px;margin-right:-10px;line-height:inherit;vertical-align:middle}.van-field__clear{color:#c9c9c9}.van-field__icon-container{color:#999}.van-field__icon{display:block!important}.van-field__button{padding-left:10px}.van-field__error-message{font-size:12px;color:#f44;text-align:left}
+@import '../common/index.css';.van-field{--cell-icon-size:16px;--cell-icon-size:var(--field-icon-size,16px)}.van-field__body{display:-webkit-flex;display:flex;-webkit-align-items:center;align-items:center}.van-field__body--textarea{line-height:1.2em}.van-field__body--textarea,.van-field__input{min-height:24px;min-height:var(--cell-line-height,24px)}.van-field__input{position:relative;display:block;box-sizing:border-box;width:100%;margin:0;padding:0;line-height:inherit;text-align:left;background-color:initial;border:0;resize:none;color:#323233;color:var(--field-input-text-color,#323233);height:24px;height:var(--cell-line-height,24px)}.van-field__input--textarea{height:18px;height:var(--field-text-area-min-height,18px);min-height:18px;min-height:var(--field-text-area-min-height,18px)}.van-field__input--error{color:#ee0a24;color:var(--field-input-error-text-color,#ee0a24)}.van-field__input--disabled{background-color:initial;opacity:1;color:#969799;color:var(--field-input-disabled-text-color,#969799)}.van-field__input--center{text-align:center}.van-field__input--right{text-align:right}.van-field__placeholder{position:absolute;top:0;right:0;left:0;pointer-events:none;color:#c8c9cc;color:var(--field-placeholder-text-color,#c8c9cc)}.van-field__placeholder--error{color:#ee0a24;color:var(--field-error-message-color,#ee0a24)}.van-field__icon-root{display:-webkit-flex;display:flex;-webkit-align-items:center;align-items:center;min-height:24px;min-height:var(--cell-line-height,24px)}.van-field__clear-root,.van-field__icon-container{line-height:inherit;vertical-align:middle;padding:0 8px;padding:0 var(--padding-xs,8px);margin-right:-8px;margin-right:-var(--padding-xs,8px)}.van-field__button,.van-field__clear-root,.van-field__icon-container{-webkit-flex-shrink:0;flex-shrink:0}.van-field__clear-root{font-size:16px;font-size:var(--field-clear-icon-size,16px);color:#c8c9cc;color:var(--field-clear-icon-color,#c8c9cc)}.van-field__icon-container{font-size:16px;font-size:var(--field-icon-size,16px);color:#969799;color:var(--field-icon-container-color,#969799)}.van-field__icon-container:empty{display:none}.van-field__button{padding-left:8px;padding-left:var(--padding-xs,8px)}.van-field__button:empty{display:none}.van-field__error-message{text-align:left;font-size:12px;font-size:var(--field-error-message-text-font-size,12px);color:#ee0a24;color:var(--field-error-message-color,#ee0a24)}.van-field__error-message--center{text-align:center}.van-field__error-message--right{text-align:right}.van-field__word-limit{text-align:right;margin-top:4px;margin-top:var(--padding-base,4px);color:#646566;color:var(--field-word-limit-color,#646566);font-size:12px;font-size:var(--field-word-limit-font-size,12px);line-height:16px;line-height:var(--field-word-limit-line-height,16px)}.van-field__word-num{display:inline}.van-field__word-num--full{color:#ee0a24;color:var(--field-word-num-full-color,#ee0a24)}
 </style>

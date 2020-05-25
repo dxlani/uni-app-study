@@ -1,5 +1,5 @@
 <template>
-<uni-shadow-root class="vant-collapse-index"><view class="van-collapse van-hairline--top-bottom custom-class">
+<uni-shadow-root class="vant-collapse-index"><view :class="'custom-class van-collapse '+(border ? 'van-hairline--top-bottom' : '')">
   <slot></slot>
 </view></uni-shadow-root>
 </template>
@@ -12,54 +12,50 @@ VantComponent({
   relation: {
     name: 'collapse-item',
     type: 'descendant',
-    linked: function linked(child) {
-      this.set({
-        items: [].concat(this.data.items, [child])
-      }, function () {
-        child.updateExpanded();
-      });
-    }
+    current: 'collapse',
   },
   props: {
-    accordion: Boolean,
-    value: null
+    value: {
+      type: null,
+      observer: 'updateExpanded',
+    },
+    accordion: {
+      type: Boolean,
+      observer: 'updateExpanded',
+    },
+    border: {
+      type: Boolean,
+      value: true,
+    },
   },
-  data: {
-    items: []
-  },
-  watch: {
-    value: function value() {
-      this.data.items.forEach(function (child) {
+  methods: {
+    updateExpanded() {
+      this.children.forEach((child) => {
         child.updateExpanded();
       });
     },
-    accordion: function accordion() {
-      this.data.items.forEach(function (child) {
-        child.updateExpanded();
-      });
-    }
-  },
-  methods: {
-    switch: function _switch(name, expanded) {
-      var _this$data = this.data,
-          accordion = _this$data.accordion,
-          value = _this$data.value;
-
+    switch(name, expanded) {
+      const { accordion, value } = this.data;
+      const changeItem = name;
       if (!accordion) {
-        name = expanded ? value.concat(name) : value.filter(function (activeName) {
-          return activeName !== name;
-        });
+        name = expanded
+          ? (value || []).concat(name)
+          : (value || []).filter((activeName) => activeName !== name);
       } else {
         name = expanded ? name : '';
       }
-
+      if (expanded) {
+        this.$emit('open', changeItem);
+      } else {
+        this.$emit('close', changeItem);
+      }
       this.$emit('change', name);
       this.$emit('input', name);
-    }
-  }
+    },
+  },
 });
 export default global['__wxComponents']['vant/collapse/index']
 </script>
 <style platform="mp-weixin">
-
+@import '../common/index.css';
 </style>

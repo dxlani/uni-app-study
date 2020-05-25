@@ -3,8 +3,6 @@
 </template>
 
 <script>
-import VanIcon from '../icon/index.vue'
-global['__wxVueOptions'] = {components:{'van-icon': VanIcon}}
 
 global['__wxRoute'] = 'vant/radio-group/index'
 import { VantComponent } from '../common/component';
@@ -13,38 +11,33 @@ VantComponent({
   relation: {
     name: 'radio',
     type: 'descendant',
-    linked: function linked(target) {
-      var _this$data = this.data,
-          value = _this$data.value,
-          disabled = _this$data.disabled;
-      target.set({
-        value: value,
-        disabled: disabled || target.data.disabled
-      });
-    }
+    current: 'radio-group',
+    linked(target) {
+      this.updateChild(target);
+    },
   },
   props: {
-    value: null,
-    disabled: Boolean
+    value: {
+      type: null,
+      observer: 'updateChildren',
+    },
+    disabled: {
+      type: Boolean,
+      observer: 'updateChildren',
+    },
   },
-  watch: {
-    value: function value(_value) {
-      var children = this.getRelationNodes('../radio/index');
-      children.forEach(function (child) {
-        child.set({
-          value: _value
-        });
+  methods: {
+    updateChildren() {
+      (this.children || []).forEach((child) => this.updateChild(child));
+    },
+    updateChild(child) {
+      const { value, disabled } = this.data;
+      child.setData({
+        value,
+        disabled: disabled || child.data.disabled,
       });
     },
-    disabled: function disabled(_disabled) {
-      var children = this.getRelationNodes('../radio/index');
-      children.forEach(function (child) {
-        child.set({
-          disabled: _disabled || child.data.disabled
-        });
-      });
-    }
-  }
+  },
 });
 export default global['__wxComponents']['vant/radio-group/index']
 </script>

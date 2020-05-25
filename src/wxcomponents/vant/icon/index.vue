@@ -1,7 +1,7 @@
 <template>
-<uni-shadow-root class="vant-icon-index"><view :class="'custom-class '+(classPrefix)+' '+(utils.isSrc(name) ? 'van-icon--image' : classPrefix + '-' + name)" :style="(color ? 'color: ' + color + ';' : '')+(size ? 'font-size: ' + size + ';' : '')+(customStyle)" @click="onClick">
-  <van-info v-if="info !== null" :info="info"></van-info>
-  <image v-if="utils.isSrc(name)" :src="name"></image>
+<uni-shadow-root class="vant-icon-index"><view :class="'custom-class '+(classPrefix)+' '+(isImageName ? 'van-icon--image' : classPrefix + '-' + name)" :style="'color: '+(color)+';font-size: '+(utils.addUnit(size))+';'+(customStyle)" @click="onClick">
+  <van-info v-if="info !== null || dot" :dot="dot" :info="info" custom-class="van-icon__info"></van-info>
+  <image v-if="isImageName" :src="name" mode="aspectFit" class="van-icon__image"></image>
 </view></uni-shadow-root>
 </template>
 <wxs src="../wxs/utils.wxs" module="utils"></wxs>
@@ -13,21 +13,29 @@ global['__wxRoute'] = 'vant/icon/index'
 import { VantComponent } from '../common/component';
 VantComponent({
   props: {
+    dot: Boolean,
     info: null,
-    name: String,
-    size: String,
+    size: null,
     color: String,
     customStyle: String,
     classPrefix: {
       type: String,
-      value: 'van-icon'
-    }
+      value: 'van-icon',
+    },
+    name: {
+      type: String,
+      observer(val) {
+        this.setData({
+          isImageName: val.indexOf('/') !== -1,
+        });
+      },
+    },
   },
   methods: {
-    onClick: function onClick() {
+    onClick() {
       this.$emit('click');
-    }
-  }
+    },
+  },
 });
 export default global['__wxComponents']['vant/icon/index']
 </script>
@@ -35,22 +43,23 @@ export default global['__wxComponents']['vant/icon/index']
 @import '../common/index.css';
 
 @font-face {
-	font-style: normal;
 	font-weight: 400;
 	font-family: vant-icon;
-	src: url(https://img.yzcdn.cn/vant/vant-icon-956c55.woff2) format('woff2'), url(https://img.yzcdn.cn/vant/vant-icon-956c55.woff) format('woff'), url(https://img.yzcdn.cn/vant/vant-icon-956c55.ttf) format('truetype')
+	font-style: normal;
+	font-display: auto;
+	src: url(https://img.yzcdn.cn/vant/vant-icon-d3825a.woff2) format("woff2"), url(https://img.yzcdn.cn/vant/vant-icon-d3825a.woff) format("woff"), url(https://img.yzcdn.cn/vant/vant-icon-d3825a.ttf) format("truetype")
 }
 
 .van-icon {
 	position: relative;
-	display: inline-block;
 	font: normal normal normal 14px/1 vant-icon;
 	font-size: inherit;
 	text-rendering: auto;
 	-webkit-font-smoothing: antialiased
 }
 
-.van-icon::before {
+.van-icon,
+.van-icon:before {
 	display: inline-block
 }
 
@@ -286,644 +295,693 @@ export default global['__wxComponents']['vant/icon/index']
 	content: "\F039"
 }
 
-.van-icon-comment-o:before {
+.van-icon-comment-circle:before {
 	content: "\F03A"
 }
 
-.van-icon-comment:before {
+.van-icon-comment-o:before {
 	content: "\F03B"
 }
 
-.van-icon-completed:before {
+.van-icon-comment:before {
 	content: "\F03C"
 }
 
-.van-icon-contact:before {
+.van-icon-completed:before {
 	content: "\F03D"
 }
 
-.van-icon-coupon-o:before {
+.van-icon-contact:before {
 	content: "\F03E"
 }
 
-.van-icon-coupon:before {
+.van-icon-coupon-o:before {
 	content: "\F03F"
 }
 
-.van-icon-credit-pay:before {
+.van-icon-coupon:before {
 	content: "\F040"
 }
 
-.van-icon-cross:before {
+.van-icon-credit-pay:before {
 	content: "\F041"
 }
 
-.van-icon-debit-pay:before {
+.van-icon-cross:before {
 	content: "\F042"
 }
 
-.van-icon-delete:before {
+.van-icon-debit-pay:before {
 	content: "\F043"
 }
 
-.van-icon-descending:before {
+.van-icon-delete:before {
 	content: "\F044"
 }
 
-.van-icon-description:before {
+.van-icon-descending:before {
 	content: "\F045"
 }
 
-.van-icon-desktop-o:before {
+.van-icon-description:before {
 	content: "\F046"
 }
 
-.van-icon-diamond-o:before {
+.van-icon-desktop-o:before {
 	content: "\F047"
 }
 
-.van-icon-diamond:before {
+.van-icon-diamond-o:before {
 	content: "\F048"
 }
 
-.van-icon-discount:before {
+.van-icon-diamond:before {
 	content: "\F049"
 }
 
-.van-icon-ecard-pay:before {
+.van-icon-discount:before {
 	content: "\F04A"
 }
 
-.van-icon-edit:before {
+.van-icon-down:before {
 	content: "\F04B"
 }
 
-.van-icon-ellipsis:before {
+.van-icon-ecard-pay:before {
 	content: "\F04C"
 }
 
-.van-icon-empty:before {
+.van-icon-edit:before {
 	content: "\F04D"
 }
 
-.van-icon-envelop-o:before {
+.van-icon-ellipsis:before {
 	content: "\F04E"
 }
 
-.van-icon-exchange:before {
+.van-icon-empty:before {
 	content: "\F04F"
 }
 
-.van-icon-expand-o:before {
+.van-icon-envelop-o:before {
 	content: "\F050"
 }
 
-.van-icon-expand:before {
+.van-icon-exchange:before {
 	content: "\F051"
 }
 
-.van-icon-eye-o:before {
+.van-icon-expand-o:before {
 	content: "\F052"
 }
 
-.van-icon-eye:before {
+.van-icon-expand:before {
 	content: "\F053"
 }
 
-.van-icon-fail:before {
+.van-icon-eye-o:before {
 	content: "\F054"
 }
 
-.van-icon-failure:before {
+.van-icon-eye:before {
 	content: "\F055"
 }
 
-.van-icon-filter-o:before {
+.van-icon-fail:before {
 	content: "\F056"
 }
 
-.van-icon-fire-o:before {
+.van-icon-failure:before {
 	content: "\F057"
 }
 
-.van-icon-fire:before {
+.van-icon-filter-o:before {
 	content: "\F058"
 }
 
-.van-icon-flag-o:before {
+.van-icon-fire-o:before {
 	content: "\F059"
 }
 
-.van-icon-flower-o:before {
+.van-icon-fire:before {
 	content: "\F05A"
 }
 
-.van-icon-free-postage:before {
+.van-icon-flag-o:before {
 	content: "\F05B"
 }
 
-.van-icon-friends-o:before {
+.van-icon-flower-o:before {
 	content: "\F05C"
 }
 
-.van-icon-friends:before {
+.van-icon-free-postage:before {
 	content: "\F05D"
 }
 
-.van-icon-gem-o:before {
+.van-icon-friends-o:before {
 	content: "\F05E"
 }
 
-.van-icon-gem:before {
+.van-icon-friends:before {
 	content: "\F05F"
 }
 
-.van-icon-gift-card-o:before {
+.van-icon-gem-o:before {
 	content: "\F060"
 }
 
-.van-icon-gift-card:before {
+.van-icon-gem:before {
 	content: "\F061"
 }
 
-.van-icon-gift-o:before {
+.van-icon-gift-card-o:before {
 	content: "\F062"
 }
 
-.van-icon-gift:before {
+.van-icon-gift-card:before {
 	content: "\F063"
 }
 
-.van-icon-gold-coin-o:before {
+.van-icon-gift-o:before {
 	content: "\F064"
 }
 
-.van-icon-gold-coin:before {
+.van-icon-gift:before {
 	content: "\F065"
 }
 
-.van-icon-goods-collect-o:before {
+.van-icon-gold-coin-o:before {
 	content: "\F066"
 }
 
-.van-icon-goods-collect:before {
+.van-icon-gold-coin:before {
 	content: "\F067"
 }
 
-.van-icon-graphic:before {
+.van-icon-good-job-o:before {
 	content: "\F068"
 }
 
-.van-icon-home-o:before {
+.van-icon-good-job:before {
 	content: "\F069"
 }
 
-.van-icon-hot-o:before {
+.van-icon-goods-collect-o:before {
 	content: "\F06A"
 }
 
-.van-icon-hot-sale-o:before {
+.van-icon-goods-collect:before {
 	content: "\F06B"
 }
 
-.van-icon-hot-sale:before {
+.van-icon-graphic:before {
 	content: "\F06C"
 }
 
-.van-icon-hot:before {
+.van-icon-home-o:before {
 	content: "\F06D"
 }
 
-.van-icon-hotel-o:before {
+.van-icon-hot-o:before {
 	content: "\F06E"
 }
 
-.van-icon-idcard:before {
+.van-icon-hot-sale-o:before {
 	content: "\F06F"
 }
 
-.van-icon-info-o:before {
+.van-icon-hot-sale:before {
 	content: "\F070"
 }
 
-.van-icon-info:before {
+.van-icon-hot:before {
 	content: "\F071"
 }
 
-.van-icon-invition:before {
+.van-icon-hotel-o:before {
 	content: "\F072"
 }
 
-.van-icon-label-o:before {
+.van-icon-idcard:before {
 	content: "\F073"
 }
 
-.van-icon-label:before {
+.van-icon-info-o:before {
 	content: "\F074"
 }
 
-.van-icon-like-o:before {
+.van-icon-info:before {
 	content: "\F075"
 }
 
-.van-icon-like:before {
+.van-icon-invition:before {
 	content: "\F076"
 }
 
-.van-icon-live:before {
+.van-icon-label-o:before {
 	content: "\F077"
 }
 
-.van-icon-location-o:before {
+.van-icon-label:before {
 	content: "\F078"
 }
 
-.van-icon-location:before {
+.van-icon-like-o:before {
 	content: "\F079"
 }
 
-.van-icon-lock:before {
+.van-icon-like:before {
 	content: "\F07A"
 }
 
-.van-icon-logistics:before {
+.van-icon-live:before {
 	content: "\F07B"
 }
 
-.van-icon-manager-o:before {
+.van-icon-location-o:before {
 	content: "\F07C"
 }
 
-.van-icon-manager:before {
+.van-icon-location:before {
 	content: "\F07D"
 }
 
-.van-icon-map-marked:before {
+.van-icon-lock:before {
 	content: "\F07E"
 }
 
-.van-icon-medel-o:before {
+.van-icon-logistics:before {
 	content: "\F07F"
 }
 
-.van-icon-medel:before {
+.van-icon-manager-o:before {
 	content: "\F080"
 }
 
-.van-icon-more-o:before {
+.van-icon-manager:before {
 	content: "\F081"
 }
 
-.van-icon-more:before {
+.van-icon-map-marked:before {
 	content: "\F082"
 }
 
-.van-icon-music-o:before {
+.van-icon-medal-o:before {
 	content: "\F083"
 }
 
-.van-icon-new-arrival-o:before {
+.van-icon-medal:before {
 	content: "\F084"
 }
 
-.van-icon-new-arrival:before {
+.van-icon-more-o:before {
 	content: "\F085"
 }
 
-.van-icon-new-o:before {
+.van-icon-more:before {
 	content: "\F086"
 }
 
-.van-icon-new:before {
+.van-icon-music-o:before {
 	content: "\F087"
 }
 
-.van-icon-newspaper-o:before {
+.van-icon-music:before {
 	content: "\F088"
 }
 
-.van-icon-notes-o:before {
+.van-icon-new-arrival-o:before {
 	content: "\F089"
 }
 
-.van-icon-orders-o:before {
+.van-icon-new-arrival:before {
 	content: "\F08A"
 }
 
-.van-icon-other-pay:before {
+.van-icon-new-o:before {
 	content: "\F08B"
 }
 
-.van-icon-paid:before {
+.van-icon-new:before {
 	content: "\F08C"
 }
 
-.van-icon-passed:before {
+.van-icon-newspaper-o:before {
 	content: "\F08D"
 }
 
-.van-icon-pause-circle-o:before {
+.van-icon-notes-o:before {
 	content: "\F08E"
 }
 
-.van-icon-pause-circle:before {
+.van-icon-orders-o:before {
 	content: "\F08F"
 }
 
-.van-icon-pause:before {
+.van-icon-other-pay:before {
 	content: "\F090"
 }
 
-.van-icon-peer-pay:before {
+.van-icon-paid:before {
 	content: "\F091"
 }
 
-.van-icon-pending-payment:before {
+.van-icon-passed:before {
 	content: "\F092"
 }
 
-.van-icon-phone-circle-o:before {
+.van-icon-pause-circle-o:before {
 	content: "\F093"
 }
 
-.van-icon-phone-o:before {
+.van-icon-pause-circle:before {
 	content: "\F094"
 }
 
-.van-icon-phone:before {
+.van-icon-pause:before {
 	content: "\F095"
 }
 
-.van-icon-photo-o:before {
+.van-icon-peer-pay:before {
 	content: "\F096"
 }
 
-.van-icon-photo:before {
+.van-icon-pending-payment:before {
 	content: "\F097"
 }
 
-.van-icon-photograph:before {
+.van-icon-phone-circle-o:before {
 	content: "\F098"
 }
 
-.van-icon-play-circle-o:before {
+.van-icon-phone-circle:before {
 	content: "\F099"
 }
 
-.van-icon-play-circle:before {
+.van-icon-phone-o:before {
 	content: "\F09A"
 }
 
-.van-icon-play:before {
+.van-icon-phone:before {
 	content: "\F09B"
 }
 
-.van-icon-plus:before {
+.van-icon-photo-o:before {
 	content: "\F09C"
 }
 
-.van-icon-point-gift-o:before {
+.van-icon-photo:before {
 	content: "\F09D"
 }
 
-.van-icon-point-gift:before {
+.van-icon-photograph:before {
 	content: "\F09E"
 }
 
-.van-icon-points:before {
+.van-icon-play-circle-o:before {
 	content: "\F09F"
 }
 
-.van-icon-printer:before {
+.van-icon-play-circle:before {
 	content: "\F0A0"
 }
 
-.van-icon-qr-invalid:before {
+.van-icon-play:before {
 	content: "\F0A1"
 }
 
-.van-icon-qr:before {
+.van-icon-plus:before {
 	content: "\F0A2"
 }
 
-.van-icon-question-o:before {
+.van-icon-point-gift-o:before {
 	content: "\F0A3"
 }
 
-.van-icon-question:before {
+.van-icon-point-gift:before {
 	content: "\F0A4"
 }
 
-.van-icon-records:before {
+.van-icon-points:before {
 	content: "\F0A5"
 }
 
-.van-icon-refund-o:before {
+.van-icon-printer:before {
 	content: "\F0A6"
 }
 
-.van-icon-replay:before {
+.van-icon-qr-invalid:before {
 	content: "\F0A7"
 }
 
-.van-icon-scan:before {
+.van-icon-qr:before {
 	content: "\F0A8"
 }
 
-.van-icon-search:before {
+.van-icon-question-o:before {
 	content: "\F0A9"
 }
 
-.van-icon-send-gift-o:before {
+.van-icon-question:before {
 	content: "\F0AA"
 }
 
-.van-icon-send-gift:before {
+.van-icon-records:before {
 	content: "\F0AB"
 }
 
-.van-icon-service-o:before {
+.van-icon-refund-o:before {
 	content: "\F0AC"
 }
 
-.van-icon-service:before {
+.van-icon-replay:before {
 	content: "\F0AD"
 }
 
-.van-icon-setting-o:before {
+.van-icon-scan:before {
 	content: "\F0AE"
 }
 
-.van-icon-setting:before {
+.van-icon-search:before {
 	content: "\F0AF"
 }
 
-.van-icon-share:before {
+.van-icon-send-gift-o:before {
 	content: "\F0B0"
 }
 
-.van-icon-shop-collect-o:before {
+.van-icon-send-gift:before {
 	content: "\F0B1"
 }
 
-.van-icon-shop-collect:before {
+.van-icon-service-o:before {
 	content: "\F0B2"
 }
 
-.van-icon-shop-o:before {
+.van-icon-service:before {
 	content: "\F0B3"
 }
 
-.van-icon-shop:before {
+.van-icon-setting-o:before {
 	content: "\F0B4"
 }
 
-.van-icon-shopping-cart-o:before {
+.van-icon-setting:before {
 	content: "\F0B5"
 }
 
-.van-icon-shopping-cart:before {
+.van-icon-share:before {
 	content: "\F0B6"
 }
 
-.van-icon-shrink:before {
+.van-icon-shop-collect-o:before {
 	content: "\F0B7"
 }
 
-.van-icon-sign:before {
+.van-icon-shop-collect:before {
 	content: "\F0B8"
 }
 
-.van-icon-smile-comment-o:before {
+.van-icon-shop-o:before {
 	content: "\F0B9"
 }
 
-.van-icon-smile-comment:before {
+.van-icon-shop:before {
 	content: "\F0BA"
 }
 
-.van-icon-smile-o:before {
+.van-icon-shopping-cart-o:before {
 	content: "\F0BB"
 }
 
-.van-icon-star-o:before {
+.van-icon-shopping-cart:before {
 	content: "\F0BC"
 }
 
-.van-icon-star:before {
+.van-icon-shrink:before {
 	content: "\F0BD"
 }
 
-.van-icon-stop-circle-o:before {
+.van-icon-sign:before {
 	content: "\F0BE"
 }
 
-.van-icon-stop-circle:before {
+.van-icon-smile-comment-o:before {
 	content: "\F0BF"
 }
 
-.van-icon-stop:before {
+.van-icon-smile-comment:before {
 	content: "\F0C0"
 }
 
-.van-icon-success:before {
+.van-icon-smile-o:before {
 	content: "\F0C1"
 }
 
-.van-icon-thumb-circle-o:before {
+.van-icon-smile:before {
 	content: "\F0C2"
 }
 
-.van-icon-todo-list-o:before {
+.van-icon-star-o:before {
 	content: "\F0C3"
 }
 
-.van-icon-todo-list:before {
+.van-icon-star:before {
 	content: "\F0C4"
 }
 
-.van-icon-tosend:before {
+.van-icon-stop-circle-o:before {
 	content: "\F0C5"
 }
 
-.van-icon-tv-o:before {
+.van-icon-stop-circle:before {
 	content: "\F0C6"
 }
 
-.van-icon-umbrella-circle:before {
+.van-icon-stop:before {
 	content: "\F0C7"
 }
 
-.van-icon-underway-o:before {
+.van-icon-success:before {
 	content: "\F0C8"
 }
 
-.van-icon-underway:before {
+.van-icon-thumb-circle-o:before {
 	content: "\F0C9"
 }
 
-.van-icon-upgrade:before {
+.van-icon-thumb-circle:before {
 	content: "\F0CA"
 }
 
-.van-icon-user-circle-o:before {
+.van-icon-todo-list-o:before {
 	content: "\F0CB"
 }
 
-.van-icon-user-o:before {
+.van-icon-todo-list:before {
 	content: "\F0CC"
 }
 
-.van-icon-video-o:before {
+.van-icon-tosend:before {
 	content: "\F0CD"
 }
 
-.van-icon-video:before {
+.van-icon-tv-o:before {
 	content: "\F0CE"
 }
 
-.van-icon-vip-card-o:before {
+.van-icon-umbrella-circle:before {
 	content: "\F0CF"
 }
 
-.van-icon-vip-card:before {
+.van-icon-underway-o:before {
 	content: "\F0D0"
 }
 
-.van-icon-volume-o:before {
+.van-icon-underway:before {
 	content: "\F0D1"
 }
 
-.van-icon-volume:before {
+.van-icon-upgrade:before {
 	content: "\F0D2"
 }
 
-.van-icon-wap-home:before {
+.van-icon-user-circle-o:before {
 	content: "\F0D3"
 }
 
-.van-icon-wap-nav:before {
+.van-icon-user-o:before {
 	content: "\F0D4"
 }
 
-.van-icon-warn-o:before {
+.van-icon-video-o:before {
 	content: "\F0D5"
 }
 
-.van-icon-warning-o:before {
+.van-icon-video:before {
 	content: "\F0D6"
 }
 
-.van-icon-weapp-nav:before {
+.van-icon-vip-card-o:before {
 	content: "\F0D7"
 }
 
-.van-icon-wechat:before {
+.van-icon-vip-card:before {
 	content: "\F0D8"
 }
 
-.van-icon-youzan-shield:before {
+.van-icon-volume-o:before {
 	content: "\F0D9"
+}
+
+.van-icon-volume:before {
+	content: "\F0DA"
+}
+
+.van-icon-wap-home-o:before {
+	content: "\F0DB"
+}
+
+.van-icon-wap-home:before {
+	content: "\F0DC"
+}
+
+.van-icon-wap-nav:before {
+	content: "\F0DD"
+}
+
+.van-icon-warn-o:before {
+	content: "\F0DE"
+}
+
+.van-icon-warning-o:before {
+	content: "\F0DF"
+}
+
+.van-icon-warning:before {
+	content: "\F0E0"
+}
+
+.van-icon-weapp-nav:before {
+	content: "\F0E1"
+}
+
+.van-icon-wechat:before {
+	content: "\F0E2"
+}
+
+.van-icon-youzan-shield:before {
+	content: "\F0E3"
+}
+
+.vant-icon-index {
+	display: -webkit-inline-flex;
+	display: inline-flex;
+	-webkit-align-items: center;
+	align-items: center;
+	-webkit-justify-content: center;
+	justify-content: center
 }
 
 .van-icon--image {
@@ -931,14 +989,12 @@ export default global['__wxComponents']['vant/icon/index']
 	height: 1em
 }
 
-.van-icon--image image {
-	top: 0;
-	left: 0;
-	right: 0;
-	bottom: 0;
-	margin: auto;
-	max-width: 100%;
-	max-height: 100%;
-	position: absolute
+.van-icon__image {
+	width: 100%;
+	height: 100%
+}
+
+.van-icon__info {
+	z-index: 1
 }
 </style>

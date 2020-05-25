@@ -1,95 +1,134 @@
 <template>
 <uni-shadow-root class="vant-tabs-index"><view :class="'custom-class '+(utils.bem('tabs', [type]))">
-  <view :style="'z-index: '+(zIndex)+'; '+(wrapStyle)" :class="(utils.bem('tabs__wrap', { scrollable }))+' '+(type === 'line' && border ? 'van-hairline--top-bottom' : '')">
-    <slot name="nav-left"></slot>
+  <van-sticky :disabled="(!sticky)" :z-index="zIndex" :offset-top="offsetTop" :container="container" @scroll="onTouchScroll">
+    <view :class="(utils.bem('tabs__wrap', { scrollable }))+' '+(type === 'line' && border ? 'van-hairline--top-bottom' : '')">
+      <slot name="nav-left"></slot>
 
-    <scroll-view :scroll-x="scrollable" scroll-with-animation :scroll-left="scrollLeft" :class="'van-tabs__scroll--'+(type)" :style="color ? 'border-color: ' + color : ''">
-      <view :class="'van-tabs__nav van-tabs__nav--'+(type)">
-        <view v-if="type === 'line'" class="van-tabs__line" :style="lineStyle"></view>
-        <view v-for="(item,index) in (tabs)" :key="item.index" :data-index="index" :class="'van-ellipsis '+(utils.bem('tab', { active: index === active, disabled: item.disabled }))" :style="(color && index !== active && type === 'card' && !item.disabled ? 'color: ' + color : '')+' '+(color && index === active && type === 'card' ? ';background-color:' + color : '')+' '+(color ? ';border-color: ' + color : '')+' '+(scrollable ? ';flex-basis:' + (88 / swipeThreshold) + '%' : '')" @click="onTap">
-          <view :class="'van-ellipsis '+(utils.bem('tab__title', { dot: item.dot }))" :style="item.titleStyle">
-            {{ item.title }}
-            <van-info v-if="item.info !== null" :info="item.info" custom-class="van-tab__title__info"></van-info>
+      <scroll-view :scroll-x="scrollable" scroll-with-animation :scroll-left="scrollLeft" :class="utils.bem('tabs__scroll', [type])" :style="color ? 'border-color: ' + color : ''">
+        <view :class="(utils.bem('tabs__nav', [type]))+' nav-class'" :style="getters.tabCardTypeBorderStyle(color, type)">
+          <view v-if="type === 'line'" class="van-tabs__line" :style="lineStyle"></view>
+          <view v-for="(item,index) in (tabs)" :key="item.index" :data-index="index" :class="(getters.tabClass(index === currentIndex, ellipsis))+' '+(utils.bem('tab', { active: index === currentIndex, disabled: item.disabled, complete: !ellipsis }))" :style="getters.tabStyle(index === currentIndex, ellipsis, color, type, item.disabled, titleActiveColor, titleInactiveColor, swipeThreshold, scrollable)" @click="onTap">
+            <view :class="ellipsis ? 'van-ellipsis' : ''" :style="item.titleStyle">
+              {{ item.title }}
+              <van-info v-if="item.info !== null || item.dot" :info="item.info" :dot="item.dot" custom-class="van-tab__title__info"></van-info>
+            </view>
           </view>
         </view>
-      </view>
-    </scroll-view>
+      </scroll-view>
 
-    <slot name="nav-right"></slot>
-  </view>
+      <slot name="nav-right"></slot>
+    </view>
+  </van-sticky>
+
   <view class="van-tabs__content" @touchstart="onTouchStart" @touchmove="onTouchMove" @touchend="onTouchEnd" @touchcancel="onTouchEnd">
-    <view class="van-tabs__track" :style="trackStyle">
+    <view :class="(utils.bem('tabs__track', [{ animated }]))+' van-tabs__track'" :style="getters.trackStyle({ duration, currentIndex, animated })">
       <slot></slot>
     </view>
   </view>
 </view></uni-shadow-root>
 </template>
-<wxs src="../wxs/utils.wxs" module="utils"></wxs>
+<wxs src="../wxs/utils.wxs" module="utils"></wxs><wxs src="./index.wxs" module="getters"></wxs>
 <script>
 import VanInfo from '../info/index.vue'
-global['__wxVueOptions'] = {components:{'van-info': VanInfo}}
+import VanSticky from '../sticky/index.vue'
+global['__wxVueOptions'] = {components:{'van-info': VanInfo,'van-sticky': VanSticky}}
 
 global['__wxRoute'] = 'vant/tabs/index'
 import { VantComponent } from '../common/component';
 import { touch } from '../mixins/touch';
+import { isDef, addUnit } from '../common/utils';
 VantComponent({
   mixins: [touch],
+  classes: ['nav-class', 'tab-class', 'tab-active-class', 'line-class'],
   relation: {
     name: 'tab',
     type: 'descendant',
-    linked: function linked(child) {
-      this.child.push(child);
-      this.updateTabs(this.data.tabs.concat(child.data));
+    current: 'tabs',
+    linked(target) {
+      target.index = this.children.length - 1;
+      this.updateTabs();
     },
-    unlinked: function unlinked(child) {
-      var index = this.child.indexOf(child);
-      var tabs = this.data.tabs;
-      tabs.splice(index, 1);
-      this.child.splice(index, 1);
-      this.updateTabs(tabs);
-    }
+    unlinked() {
+      this.children = this.children.map((child, index) => {
+        child.index = index;
+        return child;
+      });
+      this.updateTabs();
+    },
   },
   props: {
-    color: String,
+    color: {
+      type: String,
+      observer: 'setLine',
+    },
     sticky: Boolean,
-    animated: Boolean,
+    animated: {
+      type: Boolean,
+      observer() {
+        this.children.forEach((child, index) =>
+          child.updateRender(index === this.data.currentIndex, this)
+        );
+      },
+    },
     swipeable: Boolean,
     lineWidth: {
-      type: Number,
-      value: -1
+      type: [String, Number],
+      value: -1,
+      observer: 'setLine',
     },
     lineHeight: {
-      type: Number,
-      value: -1
+      type: [String, Number],
+      value: -1,
+      observer: 'setLine',
     },
+    titleActiveColor: String,
+    titleInactiveColor: String,
     active: {
-      type: Number,
-      value: 0
+      type: [String, Number],
+      value: 0,
+      observer(name) {
+        if (name !== this.getCurrentName()) {
+          this.setCurrentIndexByName(name);
+        }
+      },
     },
     type: {
       type: String,
-      value: 'line'
+      value: 'line',
     },
     border: {
       type: Boolean,
-      value: true
+      value: true,
+    },
+    ellipsis: {
+      type: Boolean,
+      value: true,
     },
     duration: {
       type: Number,
-      value: 0.3
+      value: 0.3,
     },
     zIndex: {
       type: Number,
-      value: 1
+      value: 1,
     },
     swipeThreshold: {
       type: Number,
-      value: 4
+      value: 4,
+      observer(value) {
+        this.setData({
+          scrollable: this.children.length > value || !this.data.ellipsis,
+        });
+      },
     },
     offsetTop: {
       type: Number,
-      value: 0
-    }
+      value: 0,
+    },
+    lazyRender: {
+      type: Boolean,
+      value: true,
+    },
   },
   data: {
     tabs: [],
@@ -97,294 +136,190 @@ VantComponent({
     scrollLeft: 0,
     scrollable: false,
     trackStyle: '',
-    wrapStyle: '',
-    position: ''
+    currentIndex: null,
+    container: null,
   },
-  watch: {
-    swipeThreshold: function swipeThreshold() {
-      this.set({
-        scrollable: this.child.length > this.data.swipeThreshold
-      });
-    },
-    color: 'setLine',
-    lineWidth: 'setLine',
-    lineHeight: 'setLine',
-    active: 'setActiveTab',
-    animated: 'setTrack',
-    offsetTop: 'setWrapStyle'
-  },
-  beforeCreate: function beforeCreate() {
-    this.child = [];
-  },
-  mounted: function mounted() {
-    var _this = this;
-
-    this.setLine(true);
-    this.setTrack();
-    this.scrollIntoView();
-    this.getRect('.van-tabs__wrap').then(function (rect) {
-      _this.navHeight = rect.height;
-
-      _this.observerContentScroll();
+  mounted() {
+    wx.nextTick(() => {
+      this.setLine(true);
+      this.scrollIntoView();
     });
   },
-  destroyed: function destroyed() {
-    wx.createIntersectionObserver(this).disconnect();
-  },
   methods: {
-    updateTabs: function updateTabs(tabs) {
-      tabs = tabs || this.data.tabs;
-      this.set({
-        tabs: tabs,
-        scrollable: tabs.length > this.data.swipeThreshold
+    updateContainer() {
+      this.setData({
+        container: () => this.createSelectorQuery().select('.van-tabs'),
       });
-      this.setActiveTab();
     },
-    trigger: function trigger(eventName, index) {
+    updateTabs() {
+      const { children = [], data } = this;
+      this.setData({
+        tabs: children.map((child) => child.data),
+        scrollable:
+          this.children.length > data.swipeThreshold || !data.ellipsis,
+      });
+      this.setCurrentIndexByName(this.getCurrentName() || data.active);
+    },
+    trigger(eventName, child) {
+      const { currentIndex } = this.data;
+      const currentChild = child || this.children[currentIndex];
+      if (!isDef(currentChild)) {
+        return;
+      }
       this.$emit(eventName, {
-        index: index,
-        title: this.data.tabs[index].title
+        index: currentChild.index,
+        name: currentChild.getComputedName(),
+        title: currentChild.data.title,
       });
     },
-    onTap: function onTap(event) {
-      var index = event.currentTarget.dataset.index;
-
-      if (this.data.tabs[index].disabled) {
-        this.trigger('disabled', index);
+    onTap(event) {
+      const { index } = event.currentTarget.dataset;
+      const child = this.children[index];
+      if (child.data.disabled) {
+        this.trigger('disabled', child);
       } else {
-        this.trigger('click', index);
-        this.setActive(index);
-      }
-    },
-    setActive: function setActive(active) {
-      if (active !== this.data.active) {
-        this.trigger('change', active);
-        this.set({
-          active: active
+        this.setCurrentIndex(index);
+        wx.nextTick(() => {
+          this.trigger('click');
         });
-        this.setActiveTab();
       }
     },
-    setLine: function setLine(skipTransition) {
-      var _this2 = this;
-
+    // correct the index of active tab
+    setCurrentIndexByName(name) {
+      const { children = [] } = this;
+      const matched = children.filter(
+        (child) => child.getComputedName() === name
+      );
+      if (matched.length) {
+        this.setCurrentIndex(matched[0].index);
+      }
+    },
+    setCurrentIndex(currentIndex) {
+      const { data, children = [] } = this;
+      if (
+        !isDef(currentIndex) ||
+        currentIndex >= children.length ||
+        currentIndex < 0
+      ) {
+        return;
+      }
+      children.forEach((item, index) => {
+        const active = index === currentIndex;
+        if (active !== item.data.active || !item.inited) {
+          item.updateRender(active, this);
+        }
+      });
+      if (currentIndex === data.currentIndex) {
+        return;
+      }
+      const shouldEmitChange = data.currentIndex !== null;
+      this.setData({ currentIndex });
+      wx.nextTick(() => {
+        this.setLine();
+        this.scrollIntoView();
+        this.updateContainer();
+        this.trigger('input');
+        if (shouldEmitChange) {
+          this.trigger('change');
+        }
+      });
+    },
+    getCurrentName() {
+      const activeTab = this.children[this.data.currentIndex];
+      if (activeTab) {
+        return activeTab.getComputedName();
+      }
+    },
+    setLine(skipTransition) {
       if (this.data.type !== 'line') {
         return;
       }
-
-      var _this$data = this.data,
-          color = _this$data.color,
-          active = _this$data.active,
-          duration = _this$data.duration,
-          lineWidth = _this$data.lineWidth,
-          lineHeight = _this$data.lineHeight;
-      this.getRect('.van-tab', true).then(function (rects) {
-        var rect = rects[active];
-        var width = lineWidth !== -1 ? lineWidth : rect.width / 2;
-        var height = lineHeight !== -1 ? "height: " + lineHeight + "px;" : '';
-        var left = rects.slice(0, active).reduce(function (prev, curr) {
-          return prev + curr.width;
-        }, 0);
+      const {
+        color,
+        duration,
+        currentIndex,
+        lineWidth,
+        lineHeight,
+      } = this.data;
+      this.getRect('.van-tab', true).then((rects = []) => {
+        const rect = rects[currentIndex];
+        if (rect == null) {
+          return;
+        }
+        const width = lineWidth !== -1 ? lineWidth : rect.width / 2;
+        const height =
+          lineHeight !== -1
+            ? `height: ${addUnit(lineHeight)}; border-radius: ${addUnit(
+                lineHeight
+              )};`
+            : '';
+        let left = rects
+          .slice(0, currentIndex)
+          .reduce((prev, curr) => prev + curr.width, 0);
         left += (rect.width - width) / 2;
-        var transition = skipTransition ? '' : "transition-duration: " + duration + "s; -webkit-transition-duration: " + duration + "s;";
-
-        _this2.set({
-          lineStyle: "\n            " + height + "\n            width: " + width + "px;\n            background-color: " + color + ";\n            -webkit-transform: translateX(" + left + "px);\n            transform: translateX(" + left + "px);\n            " + transition + "\n          "
+        const transition = skipTransition
+          ? ''
+          : `transition-duration: ${duration}s; -webkit-transition-duration: ${duration}s;`;
+        this.setData({
+          lineStyle: `
+            ${height}
+            width: ${addUnit(width)};
+            background-color: ${color};
+            -webkit-transform: translateX(${left}px);
+            transform: translateX(${left}px);
+            ${transition}
+          `,
         });
-      });
-    },
-    setTrack: function setTrack() {
-      var _this3 = this;
-
-      var _this$data2 = this.data,
-          animated = _this$data2.animated,
-          active = _this$data2.active,
-          duration = _this$data2.duration;
-      if (!animated) return '';
-      this.getRect('.van-tabs__content').then(function (rect) {
-        var width = rect.width;
-
-        _this3.set({
-          trackStyle: "\n            width: " + width * _this3.child.length + "px;\n            left: " + -1 * active * width + "px;\n            transition: left " + duration + "s;\n            display: -webkit-box;\n            display: flex;\n          "
-        });
-
-        var props = {
-          width: width,
-          animated: animated
-        };
-
-        _this3.child.forEach(function (item) {
-          item.set(props);
-        });
-      });
-    },
-    setActiveTab: function setActiveTab() {
-      var _this4 = this;
-
-      this.child.forEach(function (item, index) {
-        var data = {
-          active: index === _this4.data.active
-        };
-
-        if (data.active) {
-          data.inited = true;
-        }
-
-        if (data.active !== item.data.active) {
-          item.set(data);
-        }
-      });
-      this.set({}, function () {
-        _this4.setLine();
-
-        _this4.setTrack();
-
-        _this4.scrollIntoView();
       });
     },
     // scroll active tab into view
-    scrollIntoView: function scrollIntoView() {
-      var _this5 = this;
-
-      var _this$data3 = this.data,
-          active = _this$data3.active,
-          scrollable = _this$data3.scrollable;
-
+    scrollIntoView() {
+      const { currentIndex, scrollable } = this.data;
       if (!scrollable) {
         return;
       }
-
-      Promise.all([this.getRect('.van-tab', true), this.getRect('.van-tabs__nav')]).then(function (_ref) {
-        var tabRects = _ref[0],
-            navRect = _ref[1];
-        var tabRect = tabRects[active];
-        var offsetLeft = tabRects.slice(0, active).reduce(function (prev, curr) {
-          return prev + curr.width;
-        }, 0);
-
-        _this5.set({
-          scrollLeft: offsetLeft - (navRect.width - tabRect.width) / 2
+      Promise.all([
+        this.getRect('.van-tab', true),
+        this.getRect('.van-tabs__nav'),
+      ]).then(([tabRects, navRect]) => {
+        const tabRect = tabRects[currentIndex];
+        const offsetLeft = tabRects
+          .slice(0, currentIndex)
+          .reduce((prev, curr) => prev + curr.width, 0);
+        this.setData({
+          scrollLeft: offsetLeft - (navRect.width - tabRect.width) / 2,
         });
       });
     },
-    onTouchStart: function onTouchStart(event) {
+    onTouchScroll(event) {
+      this.$emit('scroll', event.detail);
+    },
+    onTouchStart(event) {
       if (!this.data.swipeable) return;
       this.touchStart(event);
     },
-    onTouchMove: function onTouchMove(event) {
+    onTouchMove(event) {
       if (!this.data.swipeable) return;
       this.touchMove(event);
     },
     // watch swipe touch end
-    onTouchEnd: function onTouchEnd() {
+    onTouchEnd() {
       if (!this.data.swipeable) return;
-      var _this$data4 = this.data,
-          active = _this$data4.active,
-          tabs = _this$data4.tabs;
-      var direction = this.direction,
-          deltaX = this.deltaX,
-          offsetX = this.offsetX;
-      var minSwipeDistance = 50;
-
+      const { tabs, currentIndex } = this.data;
+      const { direction, deltaX, offsetX } = this;
+      const minSwipeDistance = 50;
       if (direction === 'horizontal' && offsetX >= minSwipeDistance) {
-        if (deltaX > 0 && active !== 0) {
-          this.setActive(active - 1);
-        } else if (deltaX < 0 && active !== tabs.length - 1) {
-          this.setActive(active + 1);
+        if (deltaX > 0 && currentIndex !== 0) {
+          this.setCurrentIndex(currentIndex - 1);
+        } else if (deltaX < 0 && currentIndex !== tabs.length - 1) {
+          this.setCurrentIndex(currentIndex + 1);
         }
       }
     },
-    setWrapStyle: function setWrapStyle() {
-      var _ref2 = this.data,
-          offsetTop = _ref2.offsetTop,
-          position = _ref2.position;
-      var wrapStyle;
-
-      switch (position) {
-        case 'top':
-          wrapStyle = "\n            top: " + offsetTop + "px;\n            position: fixed;\n          ";
-          break;
-
-        case 'bottom':
-          wrapStyle = "\n            top: auto;\n            bottom: 0;\n          ";
-          break;
-
-        default:
-          wrapStyle = '';
-      } // cut down `set`
-
-
-      if (wrapStyle === this.data.wrapStyle) return;
-      this.set({
-        wrapStyle: wrapStyle
-      });
-    },
-    observerContentScroll: function observerContentScroll() {
-      var _this6 = this;
-
-      if (!this.data.sticky) {
-        return;
-      }
-
-      var offsetTop = this.data.offsetTop;
-
-      var _wx$getSystemInfoSync = wx.getSystemInfoSync(),
-          windowHeight = _wx$getSystemInfoSync.windowHeight;
-
-      wx.createIntersectionObserver(this).relativeToViewport({
-        top: -this.navHeight
-      }).observe('.van-tabs', function (res) {
-        var top = res.boundingClientRect.top;
-
-        if (top > 0) {
-          return;
-        }
-
-        var position = res.intersectionRatio > 0 ? 'top' : 'bottom';
-
-        _this6.$emit('scroll', {
-          scrollTop: top + offsetTop,
-          isFixed: position === 'top'
-        });
-
-        _this6.setPosition(position);
-      });
-      wx.createIntersectionObserver(this).relativeToViewport({
-        bottom: -(windowHeight - 1)
-      }).observe('.van-tabs', function (res) {
-        var _res$boundingClientRe = res.boundingClientRect,
-            top = _res$boundingClientRe.top,
-            bottom = _res$boundingClientRe.bottom;
-
-        if (bottom < _this6.navHeight) {
-          return;
-        }
-
-        var position = res.intersectionRatio > 0 ? 'top' : '';
-
-        _this6.$emit('scroll', {
-          scrollTop: top + offsetTop,
-          isFixed: position === 'top'
-        });
-
-        _this6.setPosition(position);
-      });
-    },
-    setPosition: function setPosition(position) {
-      var _this7 = this;
-
-      if (position !== this.data.position) {
-        this.set({
-          position: position
-        }).then(function () {
-          _this7.setWrapStyle();
-        });
-      }
-    }
-  }
+  },
 });
 export default global['__wxComponents']['vant/tabs/index']
 </script>
 <style platform="mp-weixin">
-@import '../common/index.css';.van-tabs{position:relative;-webkit-tap-highlight-color:transparent}.van-tabs__wrap{position:absolute;top:0;right:0;left:0;display:-webkit-flex;display:flex;background-color:#fff}.van-tabs__wrap--page-top{position:fixed}.van-tabs__wrap--content-bottom{top:auto;bottom:0}.van-tabs__wrap--scrollable .van-tab{-webkit-flex:0 0 22%;flex:0 0 22%}.van-tabs__scroll--card{border:1px solid #f44;border-radius:2px}.van-tabs__nav{position:relative;display:-webkit-flex;display:flex;-webkit-user-select:none;user-select:none}.van-tabs__nav--line{height:100%}.van-tabs__nav--card{height:30px}.van-tabs__nav--card .van-tab{line-height:30px;color:#f44;border-right:1px solid #f44}.van-tabs__nav--card .van-tab:last-child{border-right:none}.van-tabs__nav--card .van-tab.van-tab--active{color:#fff;background-color:#f44}.van-tabs__line{position:absolute;bottom:0;left:0;z-index:1;height:3px;background-color:#f44;border-radius:3px}.van-tabs--line{padding-top:44px}.van-tabs--line .van-tabs__wrap{height:44px}.van-tabs--card{padding-top:30px;margin:0 15px}.van-tabs--card .van-tabs__wrap{height:30px}.van-tabs__content{overflow:hidden}.van-tabs__track{position:relative}.van-tab{position:relative;min-width:0;padding:0 5px;font-size:14px;line-height:44px;color:#7d7e80;text-align:center;cursor:pointer;background-color:#fff;box-sizing:border-box;-webkit-flex:1;flex:1}.van-tab--active{font-weight:500;color:#333}.van-tab--disabled{color:#c9c9c9}.van-tab__title--dot::after{display:inline-block;width:8px;height:8px;vertical-align:middle;background-color:#f44;border-radius:100%;content:''}.van-tab__title__info{position:relative!important;top:-1px!important;display:inline-block;-webkit-transform:translateX(0)!important;transform:translateX(0)!important}
+@import '../common/index.css';.van-tabs{position:relative;-webkit-tap-highlight-color:transparent}.van-tabs__wrap{display:-webkit-flex;display:flex;overflow:hidden}.van-tabs__wrap--scrollable .van-tab{-webkit-flex:0 0 22%;flex:0 0 22%}.van-tabs__scroll{background-color:#fff;background-color:var(--tabs-nav-background-color,#fff)}.van-tabs__scroll--line{box-sizing:initial;height:calc(100% + 15px)}.van-tabs__scroll--card{margin:0 16px;margin:0 var(--padding-md,16px)}.van-tabs__scroll::-webkit-scrollbar{display:none}.van-tabs__nav{position:relative;display:-webkit-flex;display:flex;-webkit-user-select:none;user-select:none}.van-tabs__nav--card{box-sizing:border-box;height:30px;height:var(--tabs-card-height,30px);border:1px solid #ee0a24;border:var(--border-width-base,1px) solid var(--tabs-default-color,#ee0a24);border-radius:2px;border-radius:var(--border-radius-sm,2px)}.van-tabs__nav--card .van-tab{color:#ee0a24;color:var(--tabs-default-color,#ee0a24);line-height:28px;line-height:calc(var(--tabs-card-height, 30px) - 2*var(--border-width-base, 1px));border-right:1px solid #ee0a24;border-right:var(--border-width-base,1px) solid var(--tabs-default-color,#ee0a24)}.van-tabs__nav--card .van-tab:last-child{border-right:none}.van-tabs__nav--card .van-tab.van-tab--active{color:#fff;color:var(--white,#fff);background-color:#ee0a24;background-color:var(--tabs-default-color,#ee0a24)}.van-tabs__nav--card .van-tab--disabled{color:#c8c9cc;color:var(--tab-disabled-text-color,#c8c9cc)}.van-tabs__line{position:absolute;bottom:0;left:0;z-index:1;height:3px;height:var(--tabs-bottom-bar-height,3px);border-radius:3px;border-radius:var(--tabs-bottom-bar-height,3px);background-color:#ee0a24;background-color:var(--tabs-bottom-bar-color,#ee0a24)}.van-tabs__track{position:relative;width:100%;height:100%}.van-tabs__track--animated{display:-webkit-flex;display:flex;transition-property:-webkit-transform;transition-property:transform;transition-property:transform,-webkit-transform}.van-tabs__content{overflow:hidden}.van-tabs--line .van-tabs__wrap{height:44px;height:var(--tabs-line-height,44px)}.van-tabs--card .van-tabs__wrap{height:30px;height:var(--tabs-card-height,30px)}.van-tab{position:relative;-webkit-flex:1;flex:1;box-sizing:border-box;min-width:0;padding:0 5px;text-align:center;cursor:pointer;color:#646566;color:var(--tab-text-color,#646566);font-size:14px;font-size:var(--tab-font-size,14px);line-height:44px;line-height:var(--tabs-line-height,44px)}.van-tab--active{font-weight:500;font-weight:var(--font-weight-bold,500);color:#323233;color:var(--tab-active-text-color,#323233)}.van-tab--disabled{color:#c8c9cc;color:var(--tab-disabled-text-color,#c8c9cc)}.van-tab--complete{-webkit-flex:1 0 auto!important;flex:1 0 auto!important}.van-tab__title__info{position:relative!important;top:-1px!important;display:inline-block;-webkit-transform:translateX(0)!important;transform:translateX(0)!important}
 </style>

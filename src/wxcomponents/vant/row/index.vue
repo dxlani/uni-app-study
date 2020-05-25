@@ -1,5 +1,5 @@
 <template>
-<uni-shadow-root class="vant-row-index"><view class="custom-class van-row" :style="style">
+<uni-shadow-root class="vant-row-index"><view class="custom-class van-row" :style="viewStyle">
   <slot></slot>
 </view></uni-shadow-root>
 </template>
@@ -12,41 +12,43 @@ VantComponent({
   relation: {
     name: 'col',
     type: 'descendant',
-    linked: function linked(target) {
+    current: 'row',
+    linked(target) {
       if (this.data.gutter) {
         target.setGutter(this.data.gutter);
       }
-    }
+    },
   },
   props: {
-    gutter: Number
+    gutter: {
+      type: Number,
+      observer: 'setGutter',
+    },
   },
-  watch: {
-    gutter: 'setGutter'
+  data: {
+    viewStyle: '',
   },
-  mounted: function mounted() {
+  mounted() {
     if (this.data.gutter) {
       this.setGutter();
     }
   },
   methods: {
-    setGutter: function setGutter() {
-      var _this = this;
-
-      var gutter = this.data.gutter;
-      var margin = "-" + Number(gutter) / 2 + "px";
-      var style = gutter ? "margin-right: " + margin + "; margin-left: " + margin + ";" : '';
-      this.set({
-        style: style
+    setGutter() {
+      const { gutter } = this.data;
+      const margin = `-${Number(gutter) / 2}px`;
+      const viewStyle = gutter
+        ? `margin-right: ${margin}; margin-left: ${margin};`
+        : '';
+      this.setData({ viewStyle });
+      this.getRelationNodes('../col/index').forEach((col) => {
+        col.setGutter(this.data.gutter);
       });
-      this.getRelationNodes('../col/index').forEach(function (col) {
-        col.setGutter(_this.data.gutter);
-      });
-    }
-  }
+    },
+  },
 });
 export default global['__wxComponents']['vant/row/index']
 </script>
 <style platform="mp-weixin">
-@import '../common/index.css';.van-row::after{content:"";display:table;clear:both}
+@import '../common/index.css';.van-row:after{display:table;clear:both;content:""}
 </style>
