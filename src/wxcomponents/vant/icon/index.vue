@@ -47,7 +47,7 @@ export default global['__wxComponents']['vant/icon/index']
 	font-family: vant-icon;
 	font-style: normal;
 	font-display: auto;
-	src: url(https://img.yzcdn.cn/vant/vant-icon-d3825a.woff2) format("woff2"), url(https://img.yzcdn.cn/vant/vant-icon-d3825a.woff) format("woff"), url(https://img.yzcdn.cn/vant/vant-icon-d3825a.ttf) format("truetype")
+	src: url("https://img.yzcdn.cn/vant/vant-icon-d3825a.woff2") format("woff2"), url("https://img.yzcdn.cn/vant/vant-icon-d3825a.woff") format("woff"), url("https://img.yzcdn.cn/vant/vant-icon-d3825a.ttf") format("truetype")
 }
 
 .van-icon {
