@@ -21,7 +21,8 @@
     "dev:mp-qq": "cross-env NODE_ENV=development UNI_PLATFORM=mp-qq vue-cli-service uni-build --watch",
     "dev:mp-toutiao": "cross-env NODE_ENV=development UNI_PLATFORM=mp-toutiao vue-cli-service uni-build --watch",
     "dev:mp-weixin": "cross-env NODE_ENV=development UNI_PLATFORM=mp-weixin vue-cli-service uni-build --watch",
-    "info": "node node_modules/@dcloudio/vue-cli-plugin-uni/commands/info.js"
+    "info": "node node_modules/@dcloudio/vue-cli-plugin-uni/commands/info.js",
+    "upload:mp-weixin": "npm run build:mp-weixin && node config/upload.wx.js"
   },
   "dependencies": {
     "@dcloudio/uni-app-plus": "^2.0.0-26920200421006",
@@ -53,13 +54,15 @@
     "@vue/cli-plugin-babel": "3.5.1",
     "@vue/cli-service": "^4.1.0",
     "babel-plugin-import": "^1.11.0",
+    "cross-env": "^7.0.2",
     "mini-types": "*",
     "miniprogram-api-typings": "^2.8.0-2",
+    "miniprogram-ci": "^1.0.60",
+    "node-sass": "^4.14.1",
     "postcss-comment": "^2.0.0",
+    "sass-loader": "^8.0.0",
     "vue-template-compiler": "^2.6.10",
-    "vuex-persistedstate": "^2.7.0",
-    "node-sass": "^4.13.0",
-    "sass-loader": "^8.0.0"
+    "vuex-persistedstate": "^2.7.0"
   },
   "browserslist": [
     "Android >= 4",
@@ -67,5 +70,9 @@
   ],
   "uni-app": {
     "scripts": {}
-  }
+  },
+  "wx": {
+  		"wxVersion": "1.2.0",
+  		"wxDesc": "测试小程序CI"
+  	}
 }
