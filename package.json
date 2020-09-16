@@ -22,7 +22,9 @@
     "dev:mp-toutiao": "cross-env NODE_ENV=development UNI_PLATFORM=mp-toutiao vue-cli-service uni-build --watch",
     "dev:mp-weixin": "cross-env NODE_ENV=development UNI_PLATFORM=mp-weixin vue-cli-service uni-build --watch",
     "info": "node node_modules/@dcloudio/vue-cli-plugin-uni/commands/info.js",
-    "upload:mp-weixin": "npm run build:mp-weixin && node config/upload.wx.js"
+    "upload:mp-weixin111": "npm run build:mp-weixin &&  node config/upload.wx.js",
+    "upload:mp-weixin": " node config/upload.wx.js",
+    "preview:mp-weixin": "node config/preview.wx.js"
   },
   "dependencies": {
     "@dcloudio/uni-app-plus": "^2.0.0-26920200421006",
