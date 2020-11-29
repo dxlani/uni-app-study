@@ -100,11 +100,11 @@
             "uglifyFileName" : true
         },
         "usingComponents" : true,
+        "cloudfunctionRoot" : "static/functions/",
         "permission" : {
             "scope.userLocation" : {
                 "desc" : "你的位置信息将用于提供更精准的用户信息"
             },
-            "cloudfunctionRoot" : "static/functions/"
         }
     },
     "mp-alipay" : {
